@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rindik Art — Studio Operations</title>
+    <meta name="theme-color" content="#294b3c" />
+    <meta name="description" content="Aplikasi operasional Rindik Art untuk pesanan, produksi, absensi, dan target bisnis." />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><span class="brand-mark">R</span><span>rindik <b>art</b></span></div>
+        <div class="workspace">WORKSPACE <strong>Rindik Art Bali <span>⌄</span></strong></div>
+        <nav>
+          <a class="nav-item active" href="#overview" data-view="overview"><span>▦</span> Ringkasan</a>
+          <a class="nav-item" href="#orders" data-view="orders"><span>□</span> Pesanan <em>12</em></a>
+          <a class="nav-item" href="#production" data-view="production"><span>◇</span> Produksi</a>
+          <a class="nav-item" href="#catalog" data-view="catalog"><span>▤</span> Katalog Produk</a>
+          <a class="nav-item" href="#customers" data-view="customers"><span>♙</span> Pelanggan</a>
+          <a class="nav-item" href="#attendance" data-view="attendance"><span>◷</span> Absensi</a>
+          <a class="nav-item" href="#targets" data-view="targets"><span>◎</span> Target &amp; Pencapaian</a>
+          <a class="nav-item" href="#reports" data-view="reports"><span>◔</span> Laporan</a>
+        </nav>
+        <div class="sidebar-bottom"><a class="nav-item" href="#settings"><span>⚙</span> Pengaturan</a><div class="user"><div class="avatar">AD</div><div><b>Aditya Dharma</b><small>Administrator</small></div><span>⋮</span></div></div>
+      </aside>
+
+      <main>
+        <header><button class="menu-btn">☰</button><div class="crumb">Dashboard <span>/</span> <b>Ringkasan</b></div><div class="header-actions"><button class="install-btn" id="installApp" hidden>⇩ Pasang Aplikasi</button><button class="icon-btn">⌕</button><button class="icon-btn notification">♧<i></i></button><button class="date-pill" id="dateFilter">Agustus 2026 <span>⌄</span></button></div></header>
+
+        <section class="view active" id="overview">
+          <div class="page-heading"><div><p class="eyebrow">KAMIS, 27 AGUSTUS 2026</p><h1>Selamat pagi, Aditya <span>✦</span></h1><p class="subtitle">Inilah gambaran bisnis Rindik Art hari ini.</p></div><button class="primary-btn" id="newOrder">＋ Buat Pesanan</button></div>
+          <div class="metrics">
+            <article><div class="metric-icon green">↗</div><p>Total Penjualan</p><h2>Rp 48.750.000</h2><small class="up">↑ 12,5% <span>dari bulan lalu</span></small></article>
+            <article><div class="metric-icon ochre">□</div><p>Pesanan Baru</p><h2>12</h2><small class="up">↑ 3 pesanan <span>minggu ini</span></small></article>
+            <article><div class="metric-icon coral">◇</div><p>Sedang Diproduksi</p><h2>8</h2><small>Target selesai <b>7 hari</b></small></article>
+            <article><div class="metric-icon violet">♙</div><p>Pelanggan Aktif</p><h2>86</h2><small class="up">↑ 8 pelanggan <span>bulan ini</span></small></article>
+          </div>
+          <div class="content-grid">
+            <section class="panel sales-panel"><div class="panel-title"><div><h3>Penjualan</h3><p>Performa 6 bulan terakhir</p></div><button class="ghost-btn">6 Bulan <span>⌄</span></button></div><div class="chart-wrap"><div class="y-axis"><span>60jt</span><span>45jt</span><span>30jt</span><span>15jt</span><span>0</span></div><div class="chart"><div class="grid-lines"></div><svg viewBox="0 0 620 220" preserveAspectRatio="none"><defs><linearGradient id="fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#557d69" stop-opacity=".25"/><stop offset="1" stop-color="#557d69" stop-opacity="0"/></linearGradient></defs><path class="area" d="M0,182 C40,165 55,172 94,142 S150,157 188,132 S235,122 282,110 S335,127 375,88 S427,89 470,74 S527,82 565,42 S600,59 620,16 L620,220 L0,220Z"/><path class="line" d="M0,182 C40,165 55,172 94,142 S150,157 188,132 S235,122 282,110 S335,127 375,88 S427,89 470,74 S527,82 565,42 S600,59 620,16"/></svg><div class="months"><span>Mar</span><span>Apr</span><span>Mei</span><span>Jun</span><span>Jul</span><span>Agu</span></div></div></div><div class="chart-total"><span>Rata-rata penjualan</span><b>Rp 39.420.000</b><small>↑ 18,2%</small></div></section>
+            <section class="panel tasks-panel"><div class="panel-title"><div><h3>Prioritas Hari Ini</h3><p>Yang perlu segera ditangani</p></div><button class="more">•••</button></div><div class="task-list"><div class="task"><div class="task-icon beige">◇</div><div><b>Selesaikan Rindik Ukir Pesanan #RA-2048</b><p>Produksi · Batas waktu hari ini</p></div><span class="tag red">Mendesak</span></div><div class="task"><div class="task-icon lilac">▣</div><div><b>Konfirmasi pembayaran Ibu Sari</b><p>Pesanan #RA-2051 · Rp 3.250.000</p></div><span class="tag yellow">Menunggu</span></div><div class="task"><div class="task-icon mint">▱</div><div><b>Jadwalkan pengiriman ke Jakarta</b><p>Pesanan #RA-2045 · JNE Cargo</p></div><span class="tag green-tag">Siap Kirim</span></div></div><button class="view-all" data-target="orders">Lihat semua tugas <span>→</span></button></section>
+          </div>
+          <section class="panel orders-panel"><div class="panel-title"><div><h3>Pesanan Terbaru</h3><p>Pesanan yang baru masuk dan sedang diproses</p></div><button class="outline-btn" data-target="orders">Lihat Semua <span>→</span></button></div><div class="table-wrap"><table><thead><tr><th>ID PESANAN</th><th>PELANGGAN</th><th>PRODUK</th><th>TANGGAL</th><th>TOTAL</th><th>STATUS</th><th></th></tr></thead><tbody id="orderRows"></tbody></table></div></section>
+        </section>
+
+        <section class="view placeholder" id="orders"><div class="page-heading"><div><p class="eyebrow">MANAJEMEN PENJUALAN</p><h1>Pesanan</h1><p class="subtitle">Lacak setiap pesanan dari pembayaran hingga pengiriman.</p></div><button class="primary-btn" id="newOrder2">＋ Buat Pesanan</button></div><section class="panel orders-panel"><div class="panel-title"><h3>Semua Pesanan</h3><input class="search" placeholder="Cari pesanan atau pelanggan" /></div><div class="table-wrap"><table><thead><tr><th>ID PESANAN</th><th>PELANGGAN</th><th>PRODUK</th><th>TANGGAL</th><th>TOTAL</th><th>STATUS</th><th></th></tr></thead><tbody id="allOrderRows"></tbody></table></div></section></section>
+        <section class="view placeholder" id="production"><div class="page-heading"><div><p class="eyebrow">WORKSHOP</p><h1>Produksi</h1><p class="subtitle">Pantau pengerjaan instrumen oleh tim pengrajin.</p></div></div><div class="kanban" id="kanban"></div></section>
+        <section class="view placeholder" id="catalog"><div class="page-heading"><div><p class="eyebrow">INVENTARIS</p><h1>Katalog Produk</h1><p class="subtitle">Produk khas Rindik Art yang tersedia untuk pemesanan.</p></div></div><div class="product-grid" id="productGrid"></div></section>
+        <section class="view placeholder" id="customers"><div class="page-heading"><div><p class="eyebrow">CRM</p><h1>Pelanggan</h1><p class="subtitle">86 pelanggan aktif dan riwayat hubungan mereka.</p></div></div><section class="panel empty-state"><div class="empty-icon">♙</div><h3>Data pelanggan terpusat</h3><p>Kelola informasi pelanggan, preferensi, dan riwayat pembelian dalam satu tempat.</p></section></section>
+        <section class="view placeholder" id="attendance"><div class="page-heading"><div><p class="eyebrow">SDM · KAMIS, 27 AGUSTUS 2026</p><h1>Absensi Karyawan</h1><p class="subtitle">Pantau kehadiran dan jam kerja tim Rindik Art.</p></div><button class="primary-btn" id="checkInBtn">◷ Check-in Saya</button></div><div class="metrics"><article><div class="metric-icon green">✓</div><p>Hadir Hari Ini</p><h2 id="presentCount">14</h2><small>dari 16 karyawan</small></article><article><div class="metric-icon ochre">◷</div><p>Terlambat</p><h2>1</h2><small>Perlu ditindaklanjuti</small></article><article><div class="metric-icon coral">−</div><p>Izin / Sakit</p><h2>1</h2><small>Hari ini</small></article><article><div class="metric-icon violet">◔</div><p>Rata-rata Jam Kerja</p><h2>7j 42m</h2><small>Target 8 jam</small></article></div><section class="panel orders-panel"><div class="panel-title"><div><h3>Daftar Kehadiran Hari Ini</h3><p>Terakhir diperbarui secara otomatis</p></div><button class="outline-btn" id="downloadAttendance">⇩ Unduh Rekap</button></div><div class="table-wrap"><table><thead><tr><th>KARYAWAN</th><th>DIVISI</th><th>CHECK-IN</th><th>CHECK-OUT</th><th>DURASI</th><th>STATUS</th><th></th></tr></thead><tbody id="attendanceRows"></tbody></table></div></section></section>
+        <section class="view placeholder" id="targets"><div class="page-heading"><div><p class="eyebrow">PERIODE AGUSTUS 2026</p><h1>Target &amp; Pencapaian</h1><p class="subtitle">Pantau sasaran bisnis dan progres tim selama bulan ini.</p></div><button class="primary-btn" id="addTarget">＋ Tambah Target</button></div><div class="target-summary"><section class="panel target-hero"><div><p class="eyebrow">PROGRES BULANAN</p><h2>72% <span>tercapai</span></h2><p class="subtitle">Secara keseluruhan, bisnis berada di jalur yang baik.</p></div><div class="donut" style="--progress:72"><span>72<small>%</small></span></div></section><section class="panel focus-card"><p class="eyebrow">FOKUS MINGGU INI</p><h3>Kejar target produksi</h3><p>3 pesanan perlu selesai sebelum 31 Agustus.</p><button class="view-all" data-target="production">Lihat produksi <span>→</span></button></section></div><div class="target-grid" id="targetGrid"></div><section class="panel orders-panel achievement-panel"><div class="panel-title"><div><h3>Aktivitas Pencapaian</h3><p>Perkembangan terbaru yang tercatat bulan ini</p></div></div><div class="achievement-list"><div><span class="achievement-icon">↑</span><p><b>Target penjualan meningkat 12,5%</b><small>Realisasi Rp 48.750.000 dari target Rp 65.000.000</small></p><time>Hari ini</time></div><div><span class="achievement-icon gold">★</span><p><b>Target pelanggan baru telah terlampaui</b><small>12 pelanggan baru dari target 10 pelanggan</small></p><time>2 hari lalu</time></div><div><span class="achievement-icon blue">✓</span><p><b>Pesanan #RA-2045 berhasil dikirim</b><small>Kontribusi pada target pengiriman tepat waktu</small></p><time>3 hari lalu</time></div></div></section></section>
+        <section class="view placeholder" id="reports"><div class="page-heading"><div><p class="eyebrow">ANALITIK</p><h1>Laporan</h1><p class="subtitle">Ikhtisar performa usaha dan penjualan Rindik Art.</p></div></div><section class="panel report-card"><h3>Penjualan bulan ini</h3><h2>Rp 48.750.000</h2><p class="up">↑ 12,5% dari bulan lalu</p></section></section>
+      </main>
+    </div>
+    <nav class="mobile-nav"><a href="#overview" data-view="overview" class="active"><span>▦</span>Beranda</a><a href="#orders" data-view="orders"><span>□</span>Pesanan</a><a href="#attendance" data-view="attendance"><span>◷</span>Absensi</a><a href="#targets" data-view="targets"><span>◎</span>Target</a><a href="#production" data-view="production"><span>◇</span>Produksi</a></nav>
+    <div class="modal-backdrop" id="modal"><form class="modal"><button type="button" class="close" id="closeModal">×</button><p class="eyebrow">PESANAN BARU</p><h2>Buat Pesanan</h2><label>Nama pelanggan<input id="customerInput" required placeholder="Contoh: Made Wijaya" /></label><label>Produk<select id="productInput"><option>Rindik Ukir Klasik</option><option>Rindik Bali Premium</option><option>Rindik Mini Souvenir</option></select></label><div class="modal-actions"><button type="button" class="cancel" id="cancelModal">Batal</button><button class="primary-btn">Simpan Pesanan</button></div></form></div>
+    <script src="app.js"></script>
+  </body>
+</html>

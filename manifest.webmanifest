@@ -1,0 +1,13 @@
+{
+  "name": "Rindik Art Operations",
+  "short_name": "Rindik Art",
+  "description": "Operasional Rindik Art dalam genggaman.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fbfbf8",
+  "theme_color": "#294b3c",
+  "lang": "id",
+  "icons": [
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
+  ]
+}
