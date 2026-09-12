@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#244b3b" /><title>Rindik Art — Operasional</title>
+  <link rel="apple-touch-icon" href="rindik-art-icon.png" /><link rel="stylesheet" href="admin.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <section class="auth" id="authScreen"><form id="authForm" class="auth-card"><img src="rindik-art-logo.png" alt="Rindik Art"><p class="eyebrow">APLIKASI OPERASIONAL</p><h1>Masuk ke Rindik Art</h1><p>Kelola data perusahaan dengan aman dari perangkat mana pun.</p><label>Email<input id="email" type="email" required autocomplete="email" placeholder="nama@email.com"></label><label>Kata sandi<input id="password" type="password" required minlength="6" autocomplete="current-password" placeholder="Minimal 6 karakter"></label><button class="primary" id="authButton">Masuk</button><button type="button" class="text-button" id="authSwitch">Belum punya akun? Daftar</button><small id="authMessage"></small></form></section>
+  <div class="app" id="app" hidden>
+    <aside><img class="side-logo" src="rindik-art-logo.png" alt="Rindik Art"><p class="workspace">WORKSPACE <b>Rindik Art Bali</b></p><nav>
+      <a class="active" href="#dashboard" data-view="dashboard">▦ Ringkasan</a><a href="#orders" data-view="orders">□ Pesanan</a><a href="#attendance" data-view="attendance">◷ Absensi</a><a href="#targets" data-view="targets">◎ Target</a><a href="#settings" data-view="settings">⚙ Pengaturan</a>
+    </nav><button class="logout" id="logout">↪ Keluar</button></aside>
+    <main><header><button id="menu">☰</button><div><b id="headerName">Rindik Art</b><small id="userEmail"></small></div><img src="rindik-art-icon.png" alt=""></header>
+      <section class="view active" id="dashboard"><div class="heading"><div><p class="eyebrow">DASHBOARD OPERASIONAL</p><h1>Selamat datang</h1><p>Ringkasan data Rindik Art secara langsung.</p></div><button class="primary" data-open="order">＋ Input Pesanan</button></div><div class="cards"><article><span>Rp</span><p>Total Penjualan</p><h2 id="salesTotal">Rp 0</h2></article><article><span>□</span><p>Total Pesanan</p><h2 id="ordersTotal">0</h2></article><article><span>◷</span><p>Hadir Hari Ini</p><h2 id="attendanceTotal">0</h2></article><article><span>◎</span><p>Target Aktif</p><h2 id="targetsTotal">0</h2></article></div><section class="panel"><div class="panel-head"><div><h3>Pesanan Terbaru</h3><p>Data langsung dari database</p></div><a href="#orders" data-view="orders">Lihat semua →</a></div><div class="table"><table><thead><tr><th>PELANGGAN</th><th>PRODUK</th><th>TOTAL</th><th>STATUS</th></tr></thead><tbody id="recentOrders"></tbody></table></div></section></section>
+      <section class="view" id="orders"><div class="heading"><div><p class="eyebrow">PENJUALAN</p><h1>Pesanan</h1><p>Catat dan pantau pesanan pelanggan.</p></div><button class="primary" data-open="order">＋ Input Pesanan</button></div><section class="panel"><div class="table"><table><thead><tr><th>TANGGAL</th><th>PELANGGAN</th><th>PRODUK</th><th>TOTAL</th><th>STATUS</th></tr></thead><tbody id="ordersRows"></tbody></table></div></section></section>
+      <section class="view" id="attendance"><div class="heading"><div><p class="eyebrow">SUMBER DAYA MANUSIA</p><h1>Absensi</h1><p>Catat kehadiran karyawan harian.</p></div><button class="primary" data-open="attendance">＋ Catat Absensi</button></div><section class="panel"><div class="table"><table><thead><tr><th>KARYAWAN</th><th>DIVISI</th><th>TANGGAL</th><th>CHECK-IN</th><th>STATUS</th></tr></thead><tbody id="attendanceRows"></tbody></table></div></section></section>
+      <section class="view" id="targets"><div class="heading"><div><p class="eyebrow">KINERJA BISNIS</p><h1>Target &amp; Pencapaian</h1><p>Ukur progres sasaran bisnis Anda.</p></div><button class="primary" data-open="target">＋ Tambah Target</button></div><div class="target-grid" id="targetsRows"></div></section>
+      <section class="view" id="settings"><div class="heading"><div><p class="eyebrow">PENGATURAN</p><h1>Profil Perusahaan</h1><p>Informasi yang tampil di aplikasi operasional.</p></div></div><form class="panel form" id="settingsForm"><label>Nama perusahaan<input id="companyName" required></label><label>Nama administrator<input id="adminName" required></label><button class="primary">Simpan Perubahan</button><small id="settingsMessage"></small></form></section>
+    </main>
+  </div>
+  <div class="modal" id="modal" hidden><form class="modal-card" id="dataForm"><button type="button" id="closeModal">×</button><p class="eyebrow" id="formEyebrow"></p><h2 id="formTitle"></h2><div id="formFields"></div><button class="primary">Simpan</button><small id="formMessage"></small></form></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="admin.js"></script>
+</body></html>

@@ -1,66 +1,90 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rindik Art — Studio Operations</title>
-    <meta name="theme-color" content="#294b3c" />
-    <meta name="description" content="Aplikasi operasional Rindik Art untuk pesanan, produksi, absensi, dan target bisnis." />
-    <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="apple-touch-icon" href="icon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div class="app-shell">
-      <aside class="sidebar">
-        <div class="brand"><span class="brand-mark">R</span><span>rindik <b>art</b></span></div>
-        <div class="workspace">WORKSPACE <strong>Rindik Art Bali <span>⌄</span></strong></div>
-        <nav>
-          <a class="nav-item active" href="#overview" data-view="overview"><span>▦</span> Ringkasan</a>
-          <a class="nav-item" href="#orders" data-view="orders"><span>□</span> Pesanan <em>12</em></a>
-          <a class="nav-item" href="#production" data-view="production"><span>◇</span> Produksi</a>
-          <a class="nav-item" href="#catalog" data-view="catalog"><span>▤</span> Katalog Produk</a>
-          <a class="nav-item" href="#customers" data-view="customers"><span>♙</span> Pelanggan</a>
-          <a class="nav-item" href="#attendance" data-view="attendance"><span>◷</span> Absensi</a>
-          <a class="nav-item" href="#targets" data-view="targets"><span>◎</span> Target &amp; Pencapaian</a>
-          <a class="nav-item" href="#reports" data-view="reports"><span>◔</span> Laporan</a>
-        </nav>
-        <div class="sidebar-bottom"><a class="nav-item" href="#settings" data-view="settings"><span>⚙</span> Pengaturan</a><div class="user"><div class="avatar" id="profileInitials">AD</div><div><b id="profileName">Aditya Dharma</b><small>Administrator</small></div><span>⋮</span></div></div>
-      </aside>
-
-      <main>
-        <header><button class="menu-btn">☰</button><div class="crumb">Dashboard <span>/</span> <b>Ringkasan</b></div><div class="header-actions"><button class="install-btn" id="installApp" hidden>⇩ Pasang Aplikasi</button><button class="icon-btn">⌕</button><button class="icon-btn notification">♧<i></i></button><button class="date-pill" id="dateFilter">Agustus 2026 <span>⌄</span></button></div></header>
-
-        <section class="view active" id="overview">
-          <div class="page-heading"><div><p class="eyebrow">KAMIS, 27 AGUSTUS 2026</p><h1>Selamat pagi, <span id="greetingName">Aditya</span> <span>✦</span></h1><p class="subtitle">Inilah gambaran bisnis Rindik Art hari ini.</p></div><button class="primary-btn" id="newOrder">＋ Buat Pesanan</button></div>
-          <div class="metrics">
-            <article><div class="metric-icon green">↗</div><p>Total Penjualan</p><h2>Rp 48.750.000</h2><small class="up">↑ 12,5% <span>dari bulan lalu</span></small></article>
-            <article><div class="metric-icon ochre">□</div><p>Pesanan Baru</p><h2>12</h2><small class="up">↑ 3 pesanan <span>minggu ini</span></small></article>
-            <article><div class="metric-icon coral">◇</div><p>Sedang Diproduksi</p><h2>8</h2><small>Target selesai <b>7 hari</b></small></article>
-            <article><div class="metric-icon violet">♙</div><p>Pelanggan Aktif</p><h2>86</h2><small class="up">↑ 8 pelanggan <span>bulan ini</span></small></article>
-          </div>
-          <div class="content-grid">
-            <section class="panel sales-panel"><div class="panel-title"><div><h3>Penjualan</h3><p>Performa 6 bulan terakhir</p></div><button class="ghost-btn">6 Bulan <span>⌄</span></button></div><div class="chart-wrap"><div class="y-axis"><span>60jt</span><span>45jt</span><span>30jt</span><span>15jt</span><span>0</span></div><div class="chart"><div class="grid-lines"></div><svg viewBox="0 0 620 220" preserveAspectRatio="none"><defs><linearGradient id="fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#557d69" stop-opacity=".25"/><stop offset="1" stop-color="#557d69" stop-opacity="0"/></linearGradient></defs><path class="area" d="M0,182 C40,165 55,172 94,142 S150,157 188,132 S235,122 282,110 S335,127 375,88 S427,89 470,74 S527,82 565,42 S600,59 620,16 L620,220 L0,220Z"/><path class="line" d="M0,182 C40,165 55,172 94,142 S150,157 188,132 S235,122 282,110 S335,127 375,88 S427,89 470,74 S527,82 565,42 S600,59 620,16"/></svg><div class="months"><span>Mar</span><span>Apr</span><span>Mei</span><span>Jun</span><span>Jul</span><span>Agu</span></div></div></div><div class="chart-total"><span>Rata-rata penjualan</span><b>Rp 39.420.000</b><small>↑ 18,2%</small></div></section>
-            <section class="panel tasks-panel"><div class="panel-title"><div><h3>Prioritas Hari Ini</h3><p>Yang perlu segera ditangani</p></div><button class="more">•••</button></div><div class="task-list"><div class="task"><div class="task-icon beige">◇</div><div><b>Selesaikan Rindik Ukir Pesanan #RA-2048</b><p>Produksi · Batas waktu hari ini</p></div><span class="tag red">Mendesak</span></div><div class="task"><div class="task-icon lilac">▣</div><div><b>Konfirmasi pembayaran Ibu Sari</b><p>Pesanan #RA-2051 · Rp 3.250.000</p></div><span class="tag yellow">Menunggu</span></div><div class="task"><div class="task-icon mint">▱</div><div><b>Jadwalkan pengiriman ke Jakarta</b><p>Pesanan #RA-2045 · JNE Cargo</p></div><span class="tag green-tag">Siap Kirim</span></div></div><button class="view-all" data-target="orders">Lihat semua tugas <span>→</span></button></section>
-          </div>
-          <section class="panel orders-panel"><div class="panel-title"><div><h3>Pesanan Terbaru</h3><p>Pesanan yang baru masuk dan sedang diproses</p></div><button class="outline-btn" data-target="orders">Lihat Semua <span>→</span></button></div><div class="table-wrap"><table><thead><tr><th>ID PESANAN</th><th>PELANGGAN</th><th>PRODUK</th><th>TANGGAL</th><th>TOTAL</th><th>STATUS</th><th></th></tr></thead><tbody id="orderRows"></tbody></table></div></section>
-        </section>
-
-        <section class="view placeholder" id="orders"><div class="page-heading"><div><p class="eyebrow">MANAJEMEN PENJUALAN</p><h1>Pesanan</h1><p class="subtitle">Lacak setiap pesanan dari pembayaran hingga pengiriman.</p></div><button class="primary-btn" id="newOrder2">＋ Buat Pesanan</button></div><section class="panel orders-panel"><div class="panel-title"><h3>Semua Pesanan</h3><input class="search" placeholder="Cari pesanan atau pelanggan" /></div><div class="table-wrap"><table><thead><tr><th>ID PESANAN</th><th>PELANGGAN</th><th>PRODUK</th><th>TANGGAL</th><th>TOTAL</th><th>STATUS</th><th></th></tr></thead><tbody id="allOrderRows"></tbody></table></div></section></section>
-        <section class="view placeholder" id="production"><div class="page-heading"><div><p class="eyebrow">WORKSHOP</p><h1>Produksi</h1><p class="subtitle">Pantau pengerjaan instrumen oleh tim pengrajin.</p></div></div><div class="kanban" id="kanban"></div></section>
-        <section class="view placeholder" id="catalog"><div class="page-heading"><div><p class="eyebrow">INVENTARIS</p><h1>Katalog Produk</h1><p class="subtitle">Produk khas Rindik Art yang tersedia untuk pemesanan.</p></div></div><div class="product-grid" id="productGrid"></div></section>
-        <section class="view placeholder" id="customers"><div class="page-heading"><div><p class="eyebrow">CRM</p><h1>Pelanggan</h1><p class="subtitle">86 pelanggan aktif dan riwayat hubungan mereka.</p></div></div><section class="panel empty-state"><div class="empty-icon">♙</div><h3>Data pelanggan terpusat</h3><p>Kelola informasi pelanggan, preferensi, dan riwayat pembelian dalam satu tempat.</p></section></section>
-        <section class="view placeholder" id="attendance"><div class="page-heading"><div><p class="eyebrow">SDM · KAMIS, 27 AGUSTUS 2026</p><h1>Absensi Karyawan</h1><p class="subtitle">Pantau kehadiran dan jam kerja tim Rindik Art.</p></div><button class="primary-btn" id="checkInBtn">◷ Check-in Saya</button></div><div class="metrics"><article><div class="metric-icon green">✓</div><p>Hadir Hari Ini</p><h2 id="presentCount">14</h2><small>dari 16 karyawan</small></article><article><div class="metric-icon ochre">◷</div><p>Terlambat</p><h2>1</h2><small>Perlu ditindaklanjuti</small></article><article><div class="metric-icon coral">−</div><p>Izin / Sakit</p><h2>1</h2><small>Hari ini</small></article><article><div class="metric-icon violet">◔</div><p>Rata-rata Jam Kerja</p><h2>7j 42m</h2><small>Target 8 jam</small></article></div><section class="panel orders-panel"><div class="panel-title"><div><h3>Daftar Kehadiran Hari Ini</h3><p>Terakhir diperbarui secara otomatis</p></div><button class="outline-btn" id="downloadAttendance">⇩ Unduh Rekap</button></div><div class="table-wrap"><table><thead><tr><th>KARYAWAN</th><th>DIVISI</th><th>CHECK-IN</th><th>CHECK-OUT</th><th>DURASI</th><th>STATUS</th><th></th></tr></thead><tbody id="attendanceRows"></tbody></table></div></section></section>
-        <section class="view placeholder" id="targets"><div class="page-heading"><div><p class="eyebrow">PERIODE AGUSTUS 2026</p><h1>Target &amp; Pencapaian</h1><p class="subtitle">Pantau sasaran bisnis dan progres tim selama bulan ini.</p></div><button class="primary-btn" id="addTarget">＋ Tambah Target</button></div><div class="target-summary"><section class="panel target-hero"><div><p class="eyebrow">PROGRES BULANAN</p><h2>72% <span>tercapai</span></h2><p class="subtitle">Secara keseluruhan, bisnis berada di jalur yang baik.</p></div><div class="donut" style="--progress:72"><span>72<small>%</small></span></div></section><section class="panel focus-card"><p class="eyebrow">FOKUS MINGGU INI</p><h3>Kejar target produksi</h3><p>3 pesanan perlu selesai sebelum 31 Agustus.</p><button class="view-all" data-target="production">Lihat produksi <span>→</span></button></section></div><div class="target-grid" id="targetGrid"></div><section class="panel orders-panel achievement-panel"><div class="panel-title"><div><h3>Aktivitas Pencapaian</h3><p>Perkembangan terbaru yang tercatat bulan ini</p></div></div><div class="achievement-list"><div><span class="achievement-icon">↑</span><p><b>Target penjualan meningkat 12,5%</b><small>Realisasi Rp 48.750.000 dari target Rp 65.000.000</small></p><time>Hari ini</time></div><div><span class="achievement-icon gold">★</span><p><b>Target pelanggan baru telah terlampaui</b><small>12 pelanggan baru dari target 10 pelanggan</small></p><time>2 hari lalu</time></div><div><span class="achievement-icon blue">✓</span><p><b>Pesanan #RA-2045 berhasil dikirim</b><small>Kontribusi pada target pengiriman tepat waktu</small></p><time>3 hari lalu</time></div></div></section></section>
-        <section class="view placeholder" id="settings"><div class="page-heading"><div><p class="eyebrow">PENGELOLAAN APLIKASI</p><h1>Pengaturan</h1><p class="subtitle">Ubah profil administrator langsung dari ponsel.</p></div></div><section class="panel settings-card"><div class="settings-header"><div class="avatar large" id="settingsInitials">AD</div><div><h3>Profil Administrator</h3><p>Nama ini tampil pada dashboard dan absensi.</p></div></div><form id="profileForm"><label>Nama administrator<input id="adminNameInput" required maxlength="50" /></label><button class="primary-btn">Simpan Perubahan</button><p class="save-note" id="profileSaved"></p></form></section><section class="panel data-note"><span>◉</span><div><h3>Data tersimpan otomatis</h3><p>Pesanan, nama pelanggan, dan profil yang Anda input tersimpan di browser perangkat ini.</p></div></section></section>
-        <section class="view placeholder" id="reports"><div class="page-heading"><div><p class="eyebrow">ANALITIK</p><h1>Laporan</h1><p class="subtitle">Ikhtisar performa usaha dan penjualan Rindik Art.</p></div></div><section class="panel report-card"><h3>Penjualan bulan ini</h3><h2>Rp 48.750.000</h2><p class="up">↑ 12,5% dari bulan lalu</p></section></section>
-      </main>
-    </div>
-    <nav class="mobile-nav"><a href="#overview" data-view="overview" class="active"><span>▦</span>Beranda</a><a href="#orders" data-view="orders"><span>□</span>Pesanan</a><a href="#attendance" data-view="attendance"><span>◷</span>Absensi</a><a href="#targets" data-view="targets"><span>◎</span>Target</a><a href="#production" data-view="production"><span>◇</span>Produksi</a><a href="#settings" data-view="settings"><span>⚙</span>Atur</a></nav>
-    <div class="modal-backdrop" id="modal"><form class="modal"><button type="button" class="close" id="closeModal">×</button><p class="eyebrow">INPUT PESANAN &amp; PENJUALAN</p><h2>Tambah Pesanan</h2><label>Nama pelanggan<input id="customerInput" required placeholder="Contoh: Made Wijaya" /></label><label>Produk<select id="productInput"><option>Rindik Ukir Klasik</option><option>Rindik Bali Premium</option><option>Rindik Mini Souvenir</option></select></label><label>Nilai penjualan (Rp)<input id="totalInput" required inputmode="numeric" placeholder="Contoh: 4850000" /></label><div class="modal-actions"><button type="button" class="cancel" id="cancelModal">Batal</button><button class="primary-btn">Simpan Pesanan</button></div></form></div>
-    <script src="app.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Rindik Artshop — karya seni rindik Bali yang dibuat dengan tangan dan penuh cerita." />
+  <title>Rindik Artshop | Handmade with a Bali Soul</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --ink:#1d2e28; --forest:#315646; --leaf:#668569; --sand:#f5f0e7; --cream:#fffdf8; --terracotta:#b85c3b; --gold:#c9974c; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--cream); color:var(--ink); font-family:"DM Sans",sans-serif; line-height:1.55; }
+    a { color:inherit; text-decoration:none; }
+    .wrap { width:min(1160px, calc(100% - 48px)); margin:auto; }
+    .eyebrow { display:block; color:var(--terracotta); font-size:.72rem; font-weight:700; letter-spacing:.17em; text-transform:uppercase; margin-bottom:13px; }
+    h1,h2,h3 { font-family:"Playfair Display",serif; line-height:1.06; margin:0; }
+    h2 { font-size:clamp(2.2rem,4vw,3.8rem); }
+    .button { display:inline-flex; align-items:center; gap:10px; padding:14px 22px; border-radius:2px; background:var(--terracotta); color:white; font-size:.88rem; font-weight:700; letter-spacing:.04em; transition:.2s; }
+    .button:hover { background:#984528; transform:translateY(-2px); }
+    .button.ghost { background:transparent; border:1px solid rgba(255,255,255,.65); }
+    .button.ghost:hover { background:white; color:var(--ink); }
+    header { position:absolute; width:100%; z-index:3; color:white; }
+    nav { min-height:82px; display:flex; align-items:center; justify-content:space-between; }
+    .brand { font-family:"Playfair Display",serif; font-size:1.45rem; letter-spacing:.02em; }
+    .brand small { display:block; margin-top:-3px; font-family:"DM Sans",sans-serif; font-size:.51rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; }
+    .links { display:flex; align-items:center; gap:27px; font-size:.84rem; font-weight:600; }
+    .links a:hover { color:#ead3aa; }
+    .menu { display:none; background:none; border:0; color:white; font-size:1.35rem; }
+    .hero { min-height:710px; display:grid; align-items:end; color:white; background:linear-gradient(90deg,rgba(12,33,26,.81) 0%,rgba(12,33,26,.42) 54%,rgba(12,33,26,.09)),url('https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=2000&q=85') center/cover; }
+    .hero-content { padding:165px 0 105px; max-width:710px; }
+    .hero .eyebrow { color:#f1cc8a; }
+    .hero h1 { font-size:clamp(3.2rem,7vw,6.2rem); letter-spacing:-.045em; }
+    .hero p { max-width:520px; margin:22px 0 33px; font-size:1.08rem; color:#f3f1eb; }
+    .hero-buttons { display:flex; flex-wrap:wrap; gap:12px; }
+    .intro { display:grid; grid-template-columns:1.1fr .9fr; gap:90px; padding:118px 0; align-items:center; }
+    .intro p { color:#59645e; max-width:510px; font-size:1.03rem; }
+    .signature { margin-top:25px; color:var(--forest); font-family:"Playfair Display",serif; font-size:1.4rem; font-style:italic; }
+    .intro-image { min-height:470px; position:relative; background:url('https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=1000&q=85') center/cover; }
+    .intro-image:after { content:""; position:absolute; width:65%; height:72%; left:-32px; bottom:-28px; z-index:-1; background:#e3c99b; }
+    .collection { background:var(--sand); padding:108px 0; }
+    .collection-head { display:flex; justify-content:space-between; align-items:end; gap:20px; margin-bottom:43px; }
+    .collection-head p { max-width:380px; color:#59645e; margin:0; }
+    .products { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+    .product { background:var(--cream); }
+    .product-img { height:370px; background-position:center; background-size:cover; }
+    .product:nth-child(1) .product-img { background-image:url('https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=800&q=80'); }
+    .product:nth-child(2) .product-img { background-image:url('https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=800&q=80'); }
+    .product:nth-child(3) .product-img { background-image:url('https://images.unsplash.com/photo-1494232410401-ad00d5433cfa?auto=format&fit=crop&w=800&q=80'); }
+    .product-info { padding:22px; display:flex; justify-content:space-between; gap:13px; }
+    .product h3 { font-size:1.55rem; }
+    .product p { margin:5px 0 0; color:#68736c; font-size:.82rem; }
+    .price { color:var(--terracotta); font-weight:700; white-space:nowrap; font-size:.87rem; }
+    .process { color:white; padding:111px 0; background:linear-gradient(90deg,rgba(34,67,54,.95),rgba(34,67,54,.87)),url('https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=1800&q=80') center/cover; }
+    .process .eyebrow { color:#e8c97c; }
+    .process-top { display:flex; justify-content:space-between; gap:30px; align-items:end; }
+    .process-top p { margin:0; max-width:430px; color:#dbe4d8; }
+    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:45px; margin-top:62px; }
+    .step { border-top:1px solid rgba(255,255,255,.32); padding-top:19px; }
+    .step b { color:#ebc979; font-family:"Playfair Display",serif; font-size:2rem; }
+    .step h3 { margin:12px 0 8px; font-size:1.45rem; }
+    .step p { margin:0; color:#dbe4d8; font-size:.91rem; }
+    .custom { padding:115px 0; display:grid; grid-template-columns:.85fr 1.15fr; gap:70px; align-items:center; }
+    .custom-card { padding:44px; background:var(--forest); color:white; }
+    .custom-card h2 { font-size:clamp(2rem,3.6vw,3.35rem); }
+    .custom-card p { color:#dce7dc; }
+    .custom-art { min-height:400px; background:url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1100&q=80') center/cover; }
+    footer { background:#182720; color:#e9eee7; padding:62px 0 26px; }
+    .footer-top { display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:35px; padding-bottom:50px; }
+    footer .brand { color:white; } footer p,footer li { color:#b9c6bd; font-size:.88rem; } footer p { max-width:310px; }
+    footer h4 { margin:0 0 15px; font-size:.78rem; color:#e6c77e; letter-spacing:.12em; text-transform:uppercase; }
+    footer ul { margin:0; padding:0; list-style:none; } footer li { margin:8px 0; }
+    .copyright { border-top:1px solid rgba(255,255,255,.15); padding-top:20px; font-size:.75rem; color:#92a399; }
+    @media(max-width:760px) { .wrap { width:min(100% - 36px, 1160px); }.links { display:none; }.menu{display:block}.hero{min-height:650px}.hero-content{padding-bottom:70px}.intro,.custom{grid-template-columns:1fr;gap:42px;padding:78px 0}.intro-image{min-height:350px;order:-1}.collection,.process{padding:76px 0}.collection-head,.process-top{display:block}.collection-head p,.process-top p{margin-top:17px}.products,.steps{grid-template-columns:1fr;gap:19px}.product-img{height:330px}.steps{margin-top:40px}.footer-top{grid-template-columns:1fr;gap:22px} }
+  </style>
+</head>
+<body>
+  <header><nav class="wrap"><a class="brand" href="#home">Rindik<span> Artshop</span><small>Handmade with a Bali soul</small></a><div class="links"><a href="#koleksi">Koleksi</a><a href="#cerita">Cerita Kami</a><a href="#custom">Pesan Custom</a><a class="button" href="https://wa.me/6280000000000" target="_blank" rel="noopener">Hubungi Kami</a></div><button class="menu" aria-label="Buka menu" onclick="document.querySelector('.links').classList.toggle('open')">☰</button></nav></header>
+  <main>
+    <section class="hero" id="home"><div class="wrap hero-content"><span class="eyebrow">Dari Bali, untuk ruang istimewa Anda</span><h1>Irama tradisi.<br/>Pesona yang abadi.</h1><p>Rindik Artshop menghadirkan karya rindik dan kerajinan Bali yang dibuat dengan ketelitian, jiwa, dan rasa hormat pada warisan budaya.</p><div class="hero-buttons"><a class="button" href="#koleksi">Lihat Koleksi</a><a class="button ghost" href="#cerita">Kisah di Balik Karya</a></div></div></section>
+    <section class="intro wrap" id="cerita"><div><span class="eyebrow">Tentang Rindik Artshop</span><h2>Setiap nada membawa pulang sebuah cerita.</h2><p>Kami merayakan keindahan seni Bali melalui rindik—alat musik bambu yang lembut, hangat, dan penuh kehidupan. Setiap karya dirancang dan dibuat secara manual oleh perajin lokal, menjadikannya lebih dari sekadar benda: ia adalah penggalan budaya yang bisa Anda miliki.</p><p class="signature">Dibuat perlahan, untuk dikenang lama.</p></div><div class="intro-image" role="img" aria-label="Suasana kerajinan Bali"></div></section>
+    <section class="collection" id="koleksi"><div class="wrap"><div class="collection-head"><div><span class="eyebrow">Pilihan karya</span><h2>Koleksi unggulan</h2></div><p>Temukan karya yang menghadirkan kehangatan Bali ke dalam rumah, hadiah, maupun momen perayaan Anda.</p></div><div class="products"><article class="product"><div class="product-img"></div><div class="product-info"><div><h3>Rindik Klasik</h3><p>Nada tradisi dalam bentuk paling murni.</p></div><span class="price">Mulai Rp1,5 jt</span></div></article><article class="product"><div class="product-img"></div><div class="product-info"><div><h3>Rindik Dekoratif</h3><p>Detail artistik untuk ruang yang berkarakter.</p></div><span class="price">Mulai Rp2 jt</span></div></article><article class="product"><div class="product-img"></div><div class="product-info"><div><h3>Gift & Souvenir</h3><p>Kenangan kecil dengan makna yang besar.</p></div><span class="price">Hubungi kami</span></div></article></div></div></section>
+    <section class="process"><div class="wrap"><div class="process-top"><div><span class="eyebrow">Nilai kami</span><h2>Karya yang lahir dari tangan dan hati.</h2></div><p>Kami percaya bahwa keindahan terbaik tak pernah tergesa-gesa. Dari pemilihan bambu hingga sentuhan akhir, setiap tahap dijalani dengan penuh perhatian.</p></div><div class="steps"><div class="step"><b>01</b><h3>Pilih bahan terbaik</h3><p>Bambu pilihan dikeringkan dan disiapkan dengan standar kualitas yang terjaga.</p></div><div class="step"><b>02</b><h3>Dibentuk oleh perajin</h3><p>Setiap bagian dipahat, disetel, dan dirangkai dengan keahlian tangan lokal.</p></div><div class="step"><b>03</b><h3>Siap menjadi cerita Anda</h3><p>Karya selesai dikemas aman untuk menemani ruang dan momen spesial Anda.</p></div></div></div></section>
+    <section class="custom wrap" id="custom"><div class="custom-card"><span class="eyebrow" style="color:#e8c97c">Pesanan khusus</span><h2>Wujudkan karya yang terasa personal.</h2><p>Untuk hadiah, dekorasi, acara, atau kebutuhan usaha—ceritakan ide Anda. Kami akan membantu menciptakan rindik atau souvenir yang benar-benar merepresentasikan momen tersebut.</p><a class="button" href="https://wa.me/6280000000000" target="_blank" rel="noopener">Mulai Konsultasi ↗</a></div><div class="custom-art" role="img" aria-label="Produk kerajinan Rindik Artshop"></div></section>
+  </main>
+  <footer><div class="wrap"><div class="footer-top"><div><a class="brand" href="#home">Rindik Artshop<small>Handmade with a Bali soul</small></a><p>Karya rindik dan kerajinan Bali untuk mereka yang menghargai cerita di balik keindahan.</p></div><div><h4>Jelajahi</h4><ul><li><a href="#koleksi">Koleksi</a></li><li><a href="#cerita">Cerita Kami</a></li><li><a href="#custom">Pesan Custom</a></li></ul></div><div><h4>Hubungi</h4><ul><li>Denpasar, Bali, Indonesia</li><li><a href="https://wa.me/6280000000000">WhatsApp</a></li><li><a href="mailto:hello@rindikartshop.com">hello@rindikartshop.com</a></li></ul></div></div><div class="copyright">© 2026 Rindik Artshop. Seluruh karya dibuat dengan cinta di Bali.</div></div></footer>
+</body>
 </html>

@@ -8,6 +8,6 @@
   "theme_color": "#294b3c",
   "lang": "id",
   "icons": [
-    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
+    {"src": "rindik-art-icon.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any maskable"}
   ]
 }
