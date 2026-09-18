@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<rect width="512" height="512" rx="96" fill="#315646"/>
+<circle cx="256" cy="220" r="115" fill="none" stroke="#c9974c" stroke-width="14"/>
+<path d="M150 220h212M256 114v212M181 145l150 150M331 145L181 295" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+<text x="256" y="400" text-anchor="middle" font-family="Georgia,serif" font-size="58" font-weight="700" fill="#c9974c">RINDIK</text>
+</svg>
