@@ -1,13 +1,14 @@
 {
-  "name": "Rindik Art Operations",
-  "short_name": "Rindik Art",
-  "description": "Operasional Rindik Art dalam genggaman.",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#fbfbf8",
-  "theme_color": "#294b3c",
-  "lang": "id",
-  "icons": [
-    {"src": "rindik-art-icon.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any maskable"}
+  "name":"Rindik Art Operations",
+  "short_name":"Rindik Art",
+  "description":"Operasional Rindik Art dalam genggaman.",
+  "start_url":"https://app.rindikartshop.com/",
+  "scope":"https://app.rindikartshop.com/",
+  "display":"standalone",
+  "background_color":"#fbfcf9",
+  "theme_color":"#315646",
+  "lang":"id",
+  "icons":[
+    {"src":"rindik-art-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
   ]
 }
