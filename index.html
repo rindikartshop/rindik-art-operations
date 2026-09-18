@@ -9,8 +9,8 @@
   <link rel="icon" href="rindik-art-icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="rindik-art-icon.svg">
   <title>Rindik Art — Operasional</title>
-  <link rel="stylesheet" href="admin.css?v=20260919-10">
-  <link rel="stylesheet" href="admin-fix.css?v=20260919-10">
+  <link rel="stylesheet" href="admin.css?v=20260919-11">
+  <link rel="stylesheet" href="admin-fix.css?v=20260919-11">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
@@ -83,7 +83,7 @@
       <section class="view" id="products"><div class="heading"><div><p class="eyebrow">INVENTORY</p><h1>Produk & Stok</h1><p>SKU, harga jual, stok dan minimum stok.</p></div><button class="primary" data-open="product">＋ Produk</button></div><div class="summary-strip"><article><span>Total SKU</span><b id="productCount">0</b></article><article><span>Total Stok</span><b id="stockTotal">0</b></article><article><span>Stok Menipis</span><b id="lowStock">0</b></article><article><span>Nilai Stok</span><b id="stockValue">Rp 0</b></article></div><section class="panel"><div class="table"><table><thead><tr><th>SKU</th><th>PRODUK</th><th>KATEGORI</th><th>HARGA JUAL</th><th>STOK</th><th>MIN</th></tr></thead><tbody id="productsRows"></tbody></table></div></section></section>
       <section class="view" id="orders">
         <div class="heading"><div><p class="eyebrow">PENJUALAN</p><h1>Pesanan</h1><p>Catat dan pantau pesanan pelanggan.</p></div><button class="primary" data-open="order">＋ Input Pesanan</button></div>
-        <div class="summary-strip"><article><span>Total Pesanan</span><b id="orderCount">0</b></article><article><span>Nilai Pesanan</span><b id="orderValue">Rp 0</b></article><article><span>DP Masuk</span><b id="orderDp">Rp 0</b></article><article><span>Belum Lunas</span><b id="orderOutstanding">Rp 0</b></article></div><section class="panel"><div class="table"><table><thead><tr><th>TANGGAL</th><th>PELANGGAN</th><th>PRODUK</th><th>TOTAL</th><th>STATUS</th></tr></thead><tbody id="ordersRows"></tbody></table></div></section>
+        <div id="orderAlerts" class="order-alerts" hidden></div><div class="summary-strip"><article><span>Total Pesanan</span><b id="orderCount">0</b></article><article><span>Nilai Pesanan</span><b id="orderValue">Rp 0</b></article><article><span>DP Masuk</span><b id="orderDp">Rp 0</b></article><article><span>Belum Lunas</span><b id="orderOutstanding">Rp 0</b></article><article><span>Perlu Perhatian</span><b id="orderDueSoon">0</b></article></div><section class="panel"><div class="table"><table><thead><tr><th>TANGGAL</th><th>PELANGGAN</th><th>PRODUK</th><th>TOTAL</th><th>STATUS</th></tr></thead><tbody id="ordersRows"></tbody></table></div></section>
       </section>
 
       <section class="view" id="production"><div class="heading"><div><p class="eyebrow">PRODUKSI</p><h1>Produksi</h1><p>Rencana, proses, QC dan selesai.</p></div><button class="primary" data-open="production">＋ Produksi</button></div><div class="summary-strip"><article><span>Total Job</span><b id="productionCount">0</b></article><article><span>Qty Rencana</span><b id="productionPlanned">0</b></article><article><span>Qty Selesai</span><b id="productionCompleted">0</b></article><article><span>Sedang Proses</span><b id="productionActive">0</b></article></div><section class="panel"><div class="table"><table><thead><tr><th>KODE</th><th>PRODUK</th><th>QTY</th><th>PENGRAJIN</th><th>JATUH TEMPO</th><th>STATUS</th></tr></thead><tbody id="productionRows"></tbody></table></div></section></section>
@@ -126,6 +126,6 @@
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <script src="supabase-config.js?v=20260919-1"></script>
-  <script src="admin.js?v=20260919-9"></script>
+  <script src="admin.js?v=20260919-10"></script>
 </body>
 </html>
