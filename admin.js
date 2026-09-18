@@ -3,7 +3,7 @@ if(!cfg?.url||!cfg?.publishableKey) throw new Error('Konfigurasi Supabase belum 
 const db=window.supabase.createClient(cfg.url,cfg.publishableKey);
 
 const data={
-  orders:[],attendance:[],targets:[],customers:[],products:[],production:[],
+  orders:[],attendance:[],targets:[],customers:[],products:[],production:[],agenda:[],
   artisans:[],invoices:[],exportShipments:[],expenses:[],payments:[],companySettings:null
 };
 let mode='login',activeForm='',editingId=null,starting=false;
@@ -74,6 +74,7 @@ const forms={
     ['expense_date','Tanggal','date',1],['category','Kategori','text',1],['description','Keterangan','text',1],
     ['amount','Jumlah','number',1],['payment_method','Metode','select',0,['Cash','Transfer','Bank','Lainnya']],['notes','Catatan','text']
   ]},
+  agenda:{table:'agenda_events',title:'Agenda & Kalender',eyebrow:'AGENDA',fields:[['title','Judul agenda','text',1],['agenda_date','Tanggal','date',1],['start_time','Jam mulai','time'],['end_time','Jam selesai','time'],['category','Kategori','select',0,['Agenda','Follow-up Customer','Produksi','Pengiriman','Meeting','Pembayaran','Pribadi','Lainnya']],['reminder_minutes','Ingatkan (menit sebelum)','number'],['status','Status','select',0,['Terjadwal','Selesai','Batal']],['notes','Catatan','text']]},
   target:{table:'business_targets',title:'Target Bisnis',eyebrow:'TARGET',fields:[
     ['title','Nama target','text',1],['target_value','Nilai target','number',1],['current_value','Realisasi','number'],
     ['unit','Satuan','select',0,['Rp','pcs','%','order']],['period_label','Periode','text']
@@ -220,6 +221,7 @@ function render(){
   el('shipmentPcs')&&(el('shipmentPcs').textContent=data.exportShipments.reduce((n,x)=>n+Number(x.piece_count||0),0));
   const fobCurrencies=[...new Set(data.exportShipments.map(x=>x.currency||'USD'))];
   el('shipmentFob')&&(el('shipmentFob').textContent=fobCurrencies.length>1?'Multi-currency':new Intl.NumberFormat('id-ID',{maximumFractionDigits:2}).format(data.exportShipments.reduce((n,x)=>n+Number(x.fob_total||0),0))+' '+(fobCurrencies[0]||'USD'));
+  renderAgenda();
 
   const orderCells=x=>'<td>'+date(x.order_date)+'</td><td>'+esc(x.customer_name)+'</td><td>'+esc(x.product_name)+'</td><td>'+money(x.total_amount)+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td>';
   el('recentOrders').innerHTML=o.slice(0,5).map(x=>'<tr>'+orderCells(x)+'</tr>').join('')||'<tr><td colspan="5">Belum ada pesanan.</td></tr>';
@@ -250,13 +252,15 @@ async function load(){
     exportShipments:db.from('export_shipments').select('*').order('created_at',{ascending:false}),
     expenses:db.from('expenses').select('*').order('expense_date',{ascending:false}),
     payments:db.from('payments').select('*').order('payment_date',{ascending:false}),
-    settings:db.from('app_settings').select('*').eq('id','company').maybeSingle()
+    settings:db.from('app_settings').select('*').eq('id','company').maybeSingle(),
+    agenda:db.from('agenda_events').select('*').order('agenda_date',{ascending:true}).order('start_time',{ascending:true})
   };
   const es=Object.entries(q),rs=await Promise.all(es.map(([,x])=>x)),bad=rs.find(x=>x.error);
   if(bad){console.error(bad.error);msg('settingsMessage',bad.error.message||'Data belum bisa dimuat.');return false}
   es.forEach(([k],i)=>{if(k!=='settings')data[k]=rs[i].data||[]});
   const st=rs[es.findIndex(x=>x[0]==='settings')].data;
   data.companySettings=st||{company_name:'Rindik Art',admin_name:''};
+  data.agenda=rs[es.findIndex(x=>x[0]==='agenda')].data||[];
   if(st){el('companyName').value=st.company_name||'Rindik Art';el('adminName').value=st.admin_name||'';el('headerName').textContent=st.company_name||'Rindik Art'}
   render();msg('settingsMessage','');return true;
 }
@@ -316,6 +320,11 @@ el('dataForm').onsubmit=async e=>{
   el('modal').hidden=true;editingId=null;e.target.reset();await load();
 };
 
+let calendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);const agendaDateTime=a=>new Date(a.agenda_date+'T'+(a.start_time||'00:00:00'));
+function renderAgenda(){const now=new Date(),upcoming=data.agenda.filter(a=>a.status!=='Batal'&&a.status!=='Selesai'&&agendaDateTime(a)>=now).sort((a,b)=>agendaDateTime(a)-agendaDateTime(b)).slice(0,8);const shipmentAlerts=data.orders.filter(x=>x.due_date&&x.status!=='Selesai'&&x.status!=='Batal').map(x=>{const d=new Date(x.due_date+'T00:00:00');return {...x,days:Math.ceil((d-new Date(today()+'T00:00:00'))/86400000)}}).filter(x=>x.days<=7);const p=el('notificationPanel');if(p){const items=[];upcoming.slice(0,5).forEach(a=>items.push('<div class="notice"><b>🔔 '+esc(a.title)+'</b><span>'+date(a.agenda_date)+(a.start_time?' · '+String(a.start_time).slice(0,5):'')+' · '+esc(a.category||'Agenda')+'</span></div>'));shipmentAlerts.slice(0,5).forEach(x=>items.push('<div class="notice shipment"><b>📦 '+esc(x.days<0?'Pesanan terlambat':x.days===0?'Pengiriman hari ini':x.days===1?'Pengiriman besok':'Pengiriman '+x.days+' hari lagi')+'</b><span>'+esc(x.order_code||'PO')+' · '+esc(x.customer_name||'Customer')+'</span></div>'));p.innerHTML=items.length?'<div class="notice-title">🔔 Pusat Notifikasi</div>'+items.join(''):'<div class="notice quiet">✓ Tidak ada agenda atau deadline yang perlu perhatian saat ini.</div>'}const rows=el('agendaRows');if(rows)rows.innerHTML=data.agenda.slice().sort((a,b)=>agendaDateTime(a)-agendaDateTime(b)).map(a=>'<tr><td>'+date(a.agenda_date)+'</td><td>'+esc(a.start_time?String(a.start_time).slice(0,5):'—')+'</td><td><b>'+esc(a.title)+'</b><br><small>'+esc(a.notes||'')+'</small></td><td>'+esc(a.category||'Agenda')+'</td><td><span class="tag">'+esc(a.status||'Terjadwal')+'</span></td>'+action('agenda_events',a.id)+'</tr>').join('')||'<tr><td colspan="6">Belum ada agenda.</td></tr>';renderCalendar();if(document.visibilityState==='visible')maybeBrowserNotify(upcoming,shipmentAlerts)}
+function renderCalendar(){const y=calendarCursor.getFullYear(),m=calendarCursor.getMonth(),first=new Date(y,m,1),days=new Date(y,m+1,0).getDate(),start=(first.getDay()+6)%7;el('calendarTitle').textContent=first.toLocaleDateString('id-ID',{month:'long',year:'numeric'});const names=['Sen','Sel','Rab','Kam','Jum','Sab','Min'];let h=names.map(n=>'<div class="cal-name">'+n+'</div>').join('');for(let i=0;i<start;i++)h+='<div class="cal-day empty"></div>';for(let d=1;d<=days;d++){const ds=new Date(y,m,d).toLocaleDateString('en-CA'),list=data.agenda.filter(a=>a.agenda_date===ds&&a.status!=='Batal');h+='<div class="cal-day '+(ds===today()?'today':'')+'"><b>'+d+'</b>'+list.slice(0,3).map(a=>'<span>'+esc(a.start_time?String(a.start_time).slice(0,5)+' ':'')+esc(a.title)+'</span>').join('')+(list.length>3?'<small>+'+(list.length-3)+' agenda</small>':'')+'</div>'}el('calendarGrid').innerHTML=h}
+let notifiedKeys=new Set();function maybeBrowserNotify(upcoming,shipmentAlerts){if(!('Notification'in window)||Notification.permission!=='granted')return;const now=Date.now();upcoming.forEach(a=>{const dt=agendaDateTime(a),minutes=Number(a.reminder_minutes??60),key='a:'+a.id+':'+a.agenda_date+':'+a.start_time;if(now>=dt.getTime()-minutes*60000&&now<=dt.getTime()+10*60000&&!notifiedKeys.has(key)){new Notification('Rindik Art — Pengingat',{body:a.title+' · '+date(a.agenda_date)+(a.start_time?' '+String(a.start_time).slice(0,5):'')});notifiedKeys.add(key)}});shipmentAlerts.filter(x=>x.days<=2).forEach(x=>{const key='s:'+x.id+':'+x.due_date;if(!notifiedKeys.has(key)){new Notification('Rindik Art — Deadline Pengiriman',{body:(x.order_code||'PO')+' · '+(x.customer_name||'Customer')+' · '+(x.days<0?'Terlambat':x.days===0?'Hari ini':x.days+' hari lagi')});notifiedKeys.add(key)}})}
+
 document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openForm(b.dataset.open));
 
 function qrPayload(artisan){return 'RINDIK-ABSEN|'+artisan.id+'|'+(artisan.artisan_code||'')+'|'+encodeURIComponent(artisan.name||'')}
@@ -365,6 +374,9 @@ el('closeQrModal')?.addEventListener('click',()=>{el('qrModal').hidden=true});
 el('printQrBtn')?.addEventListener('click',()=>window.print());
 
 el('closeModal').onclick=()=>{el('modal').hidden=true;editingId=null};
+el('prevMonth')?.addEventListener('click',()=>{calendarCursor.setMonth(calendarCursor.getMonth()-1);renderCalendar()});
+el('nextMonth')?.addEventListener('click',()=>{calendarCursor.setMonth(calendarCursor.getMonth()+1);renderCalendar()});
+el('requestNotify')?.addEventListener('click',async()=>{if(!('Notification'in window)){alert('Browser tidak mendukung notifikasi.');return}const p=await Notification.requestPermission();alert(p==='granted'?'✓ Notifikasi aktif.':'Notifikasi belum diizinkan.');renderAgenda()});
 
 document.addEventListener('click',async e=>{
   const b=e.target.closest('[data-action]');if(!b)return;
