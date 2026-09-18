@@ -92,4 +92,4 @@ async function start(){if(starting)return;starting=true;try{const recovery=locat
 db.auth.onAuthStateChange((event,session)=>{if(event==='PASSWORD_RECOVERY'){el('authScreen').hidden=true;el('app').hidden=true;el('recoveryScreen').hidden=false}else if(event==='SIGNED_IN'&&session&&el('app').hidden)showApp(session);});
 el('logout').onclick=async()=>{await db.auth.signOut();location.href='/'};
 window.addEventListener('load',start);
-if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=20260918-4').catch(console.warn));
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=20260918-6').catch(console.warn));
