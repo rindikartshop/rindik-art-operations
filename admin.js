@@ -108,7 +108,13 @@ el('authForm').onsubmit=async e=>{
   const result=mode==='login'
     ? await db.auth.signInWithPassword({email,password})
     : await db.auth.signUp({email,password,options:{emailRedirectTo:'https://app.rindikartshop.com/'}});
-  if(result.error){msg('authMessage',result.error.message);return}
+  if(result.error){
+    const e=String(result.error.message||'');
+    const l=e.toLowerCase();
+    if(l.includes('invalid login credentials')) msg('authMessage','Email atau kata sandi tidak cocok pada akun produksi Rindik Art. Gunakan password akun produksi terbaru.');
+    else msg('authMessage',e);
+    return;
+  }
   if(mode==='signup'){
     msg('authMessage',result.data.session?'Akun berhasil dibuat.':'Periksa email untuk konfirmasi akun, lalu masuk.');
   }else{
