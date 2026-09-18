@@ -73,7 +73,7 @@ if(activeForm==='payment'){raw.amount=Number(raw.amount||0);raw.payment_date=raw
 if(activeForm==='expense')raw.amount=Number(raw.amount||0);
 if(activeForm==='target'){raw.target_value=Number(raw.target_value||0);raw.current_value=Number(raw.current_value||0)}
 if(activeForm==='product'){raw.cost_price=Number(raw.cost_price||0);raw.selling_price=Number(raw.selling_price||0);raw.stock=Number(raw.stock||0);raw.min_stock=Number(raw.min_stock||0)}
-const query=editingId?db.from(f.table).update({...raw,updated_at:new Date().toISOString()}).eq('id',editingId):db.from(f.table).insert(raw);const {error}=await query;
+const payload=activeForm==='payment'?raw:{...raw,updated_at:new Date().toISOString()};const query=editingId?db.from(f.table).update(payload).eq('id',editingId):db.from(f.table).insert(raw);const {error}=await query;
 if(!error&&activeForm==='payment'){await syncInvoicePayments(raw.invoice_id)}if(error){console.error(error);msg('formMessage',error.message);return}el('modal').hidden=true;editingId=null;e.target.reset();await load()};
 
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-action]');if(!b)return;const act=b.dataset.action,id=b.dataset.id,table=b.dataset.table;
