@@ -104,7 +104,7 @@ el('forgotButton').onclick=async()=>{
 
 el('authForm').onsubmit=async e=>{
   e.preventDefault();msg('authMessage','Memproses...');
-  const email=el('email').value.trim(),password=el('password').value;
+  const email=el('email').value.trim().toLowerCase(),password=el('password').value;
   const result=mode==='login'
     ? await db.auth.signInWithPassword({email,password})
     : await db.auth.signUp({email,password,options:{emailRedirectTo:'https://app.rindikartshop.com/'}});
