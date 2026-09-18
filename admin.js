@@ -98,7 +98,7 @@ el('forgotButton').onclick=async()=>{
   const email=el('email').value.trim();
   if(!email){msg('authMessage','Masukkan email terlebih dahulu.');el('email').focus();return}
   msg('authMessage','Mengirim email pemulihan...');
-  const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:'https://app.rindikartshop.com/#update-password'});
+  const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:'https://app.rindikartshop.com/reset-password'});
   msg('authMessage',error?error.message:'Email pemulihan telah dikirim. Periksa inbox/spam.');
 };
 
@@ -125,7 +125,7 @@ el('recoveryForm').onsubmit=async e=>{
   const {error}=await db.auth.updateUser({password:p});
   if(error){msg('recoveryMessage',error.message);return}
   msg('recoveryMessage','✓ Kata sandi berhasil diperbarui. Silakan masuk kembali.');
-  setTimeout(()=>location.hash='',900);
+  setTimeout(()=>{history.replaceState(null,'','/');location.reload()},900);
 };
 
 async function showApp(session){
@@ -138,9 +138,9 @@ async function start(){
   if(starting)return;starting=true;
   try{
     const hash=location.hash;
-    if(hash.includes('type=recovery')||hash.includes('update-password')){el('authScreen').hidden=true;el('recoveryScreen').hidden=false;await new Promise(r=>setTimeout(r,100));}
+    if(location.pathname.endsWith('/reset-password')||hash.includes('type=recovery')){el('authScreen').hidden=true;el('recoveryScreen').hidden=false;await new Promise(r=>setTimeout(r,100));}
     const {data:{session}}=await db.auth.getSession();
-    if(session&&!el('recoveryScreen').hidden)return;
+    if(session&&(!el('recoveryScreen').hidden||location.pathname.endsWith('/reset-password')))return;
     if(session)await showApp(session);
   }finally{starting=false}
 }
