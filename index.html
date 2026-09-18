@@ -23,7 +23,7 @@
       <h1 id="authTitle">Masuk ke Rindik Art</h1>
       <p id="authDescription">Kelola data perusahaan dengan aman dari perangkat mana pun.</p>
       <label>Email<input id="email" type="email" required autocomplete="email" placeholder="nama@email.com"></label>
-      <label>Kata sandi<input id="password" type="password" required minlength="6" autocomplete="current-password" placeholder="Minimal 6 karakter"></label>
+      <label>Kata sandi<div class="password-wrap"><input id="password" type="password" required minlength="6" autocomplete="current-password" placeholder="Minimal 6 karakter"><button type="button" class="password-toggle" id="passwordToggle" aria-label="Tampilkan kata sandi">Tampilkan</button></div></label>
       <button class="primary" id="authButton" type="submit">Masuk</button>
       <button type="button" class="text-button" id="forgotButton">Lupa kata sandi?</button>
       <button type="button" class="text-button" id="authSwitch">Belum punya akun? Daftar</button>
