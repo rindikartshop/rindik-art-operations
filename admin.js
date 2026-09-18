@@ -178,7 +178,7 @@ function render(){
   el('productsRows').innerHTML=data.products.map(x=>'<tr><td>'+esc(x.sku)+'</td><td>'+esc(x.name)+'</td><td>'+esc(x.category||'—')+'</td><td>'+money(x.selling_price)+'</td><td>'+Number(x.stock||0)+'</td><td>'+Number(x.min_stock||0)+'</td>'+action('products',x.id)+'</tr>').join('')||'<tr><td colspan="7">Belum ada produk.</td></tr>';
   el('productionRows').innerHTML=data.production.map(x=>'<tr><td>'+esc(x.production_code)+'</td><td>'+esc(data.products.find(p=>String(p.id)===String(x.product_id))?.name||x.product_name||'—')+'</td><td>'+Number(x.qty_planned||0)+' / '+Number(x.qty_completed||0)+'</td><td>'+esc(data.artisans.find(a=>String(a.id)===String(x.artisan_id))?.name||'—')+'</td><td>'+date(x.due_date)+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td>'+action('production_orders',x.id)+'</tr>').join('')||'<tr><td colspan="7">Belum ada produksi.</td></tr>';
   el('artisansRows').innerHTML=data.artisans.map(x=>'<tr><td>'+esc(x.artisan_code||'—')+'</td><td>'+esc(x.name)+'</td><td>'+esc(x.skill||'—')+'</td><td>'+Number(x.daily_capacity||0)+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td>'+action('artisans',x.id)+'</tr>').join('')||'<tr><td colspan="6">Belum ada pengrajin.</td></tr>';
-  el('attendanceRows').innerHTML=data.attendance.map(x=>'<tr><td>'+esc(x.employee_name)+'</td><td>'+esc(x.division||'—')+'</td><td>'+date(x.attendance_date)+'</td><td>'+time(x.check_in)+'</td><td>'+time(x.check_out)+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td>'+action('attendance',x.id,x.check_in&&!x.check_out?'<button type="button" class="row-btn" data-action="checkout" data-id="'+x.id+'">Pulang</button>':'')+'</tr>').join('')||'<tr><td colspan="7">Belum ada absensi.</td></tr>';
+  el('attendanceRows').innerHTML=data.attendance.map(x=>{const a=data.artisans.find(v=>v.name===x.employee_name);return '<tr><td>'+esc(x.employee_name)+'</td><td>'+esc(x.division||'—')+'</td><td>'+date(x.attendance_date)+'</td><td>'+time(x.check_in)+'</td><td>'+time(x.check_out)+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td><td>'+(a?'<button type="button" class="row-btn" data-action="qr" data-id="'+a.id+'">QR</button>':'')+(x.check_in&&!x.check_out?'<button type="button" class="row-btn" data-action="checkout" data-id="'+x.id+'">Pulang</button>':'')+'<button type="button" class="row-btn" data-action="edit" data-table="attendance" data-id="'+x.id+'">Edit</button><button type="button" class="row-btn danger" data-action="delete" data-table="attendance" data-id="'+x.id+'">Hapus</button></td></tr>'}).join('')||'<tr><td colspan="7">Belum ada absensi.</td></tr>';
   el('invoicesRows').innerHTML=data.invoices.map(x=>'<tr><td>'+esc(x.invoice_no)+'</td><td>'+date(x.issue_date)+'</td><td>'+date(x.due_date)+'</td><td>'+money(x.total)+'</td><td>'+money(x.paid_amount)+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td>'+action('invoices',x.id,'<button type="button" class="row-btn" data-action="print" data-id="'+x.id+'">Print</button>')+'</tr>').join('')||'<tr><td colspan="7">Belum ada invoice.</td></tr>';
   el('exportRows').innerHTML=data.exportShipments.map(x=>'<tr><td>'+esc(x.shipment_code)+'</td><td>'+esc(x.country||'—')+'</td><td>'+esc(x.destination||'—')+'</td><td>'+Number(x.cbm||0)+'</td><td>'+Number(x.carton_count||0)+'</td><td>'+Number(x.piece_count||0)+'</td><td>'+Number(x.fob_total||0)+' '+esc(x.currency||'USD')+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td>'+action('export_shipments',x.id)+'</tr>').join('')||'<tr><td colspan="9">Belum ada shipment.</td></tr>';
   el('paymentsRows').innerHTML=data.payments.slice(0,30).map(x=>'<tr><td>'+date(x.payment_date)+'</td><td>'+esc(data.invoices.find(i=>String(i.id)===String(x.invoice_id))?.invoice_no||'—')+'</td><td>'+esc(data.orders.find(o=>String(o.id)===String(x.order_id))?.order_code||'—')+'</td><td>'+money(x.amount)+'</td><td>'+esc(x.payment_method||'—')+'</td><td>'+esc(x.reference_no||'—')+'</td>'+action('payments',x.id)+'</tr>').join('')||'<tr><td colspan="7">Belum ada pembayaran.</td></tr>';
@@ -267,6 +267,53 @@ el('dataForm').onsubmit=async e=>{
 };
 
 document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openForm(b.dataset.open));
+
+function qrPayload(artisan){return 'RINDIK-ABSEN|'+artisan.id+'|'+(artisan.artisan_code||'')+'|'+encodeURIComponent(artisan.name||'')}
+function showQrForArtisan(id){
+  const a=data.artisans.find(x=>String(x.id)===String(id));if(!a)return;
+  const box=el('qrCode');box.innerHTML='';
+  el('qrTitle').textContent='QR Absensi — '+(a.name||'Pengrajin');
+  el('qrSub').textContent=(a.artisan_code||'')+' · Scan untuk check-in / check-out';
+  if(window.QRCode)new QRCode(box,{text:qrPayload(a),width:220,height:220,colorDark:'#20362d',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  el('qrModal').hidden=false;
+}
+let qrScanner=null,scannerRunning=false;
+async function stopQrScanner(){
+  if(qrScanner&&scannerRunning){try{await qrScanner.stop();await qrScanner.clear()}catch(e){console.warn(e)}}
+  qrScanner=null;scannerRunning=false;
+}
+async function handleAttendanceQr(text){
+  const p=String(text||'').split('|');if(p[0]!=='RINDIK-ABSEN'||!p[1]){msg('scanMessage','QR tidak dikenali sebagai QR Absensi Rindik Art.');return}
+  const a=data.artisans.find(x=>String(x.id)===String(p[1]));
+  if(!a){msg('scanMessage','Data pengrajin untuk QR ini tidak ditemukan.');return}
+  msg('scanMessage','Memproses absensi '+a.name+'...');
+  const {data:todayRows,error}=await db.from('attendance').select('*').eq('attendance_date',today()).eq('employee_name',a.name).order('created_at',{ascending:false}).limit(1);
+  if(error){msg('scanMessage','Gagal membaca absensi: '+error.message);return}
+  const open=todayRows?.find(x=>!x.check_out);
+  if(open){
+    const {error:e}=await db.from('attendance').update({check_out:new Date().toISOString()}).eq('id',open.id);
+    if(e)msg('scanMessage','Gagal check-out: '+e.message);else{msg('scanMessage','✓ '+a.name+' berhasil check-out.');await load();setTimeout(()=>{el('scannerModal').hidden=true;stopQrScanner()},700)}
+  }else{
+    const {error:e}=await db.from('attendance').insert({employee_name:a.name,division:a.division||'',attendance_date:today(),check_in:new Date().toISOString(),status:'Hadir',notes:'Absensi QR'});
+    if(e)msg('scanMessage','Gagal check-in: '+e.message);else{msg('scanMessage','✓ '+a.name+' berhasil check-in.');await load();setTimeout(()=>{el('scannerModal').hidden=true;stopQrScanner()},700)}
+  }
+}
+async function startQrScanner(){
+  if(typeof Html5Qrcode==='undefined'){msg('scanMessage','Scanner belum termuat. Pastikan internet aktif, lalu coba lagi.');return}
+  await stopQrScanner();
+  qrScanner=new Html5Qrcode('qr-reader');scannerRunning=true;
+  try{
+    await qrScanner.start({facingMode:'environment'},{fps:10,qrbox:{width:250,height:250}},handleAttendanceQr,()=>{});
+  }catch(e){
+    scannerRunning=false;msg('scanMessage','Kamera tidak dapat dibuka. Izinkan akses kamera di browser, lalu coba lagi.');
+  }
+}
+el('scanAttendanceBtn')?.addEventListener('click',()=>{el('scannerModal').hidden=false;msg('scanMessage','Arahkan kamera ke QR karyawan.');setTimeout(startQrScanner,150)});
+el('closeScanner')?.addEventListener('click',()=>{el('scannerModal').hidden=true;stopQrScanner()});
+el('stopScanner')?.addEventListener('click',()=>{el('scannerModal').hidden=true;stopQrScanner()});
+el('closeQrModal')?.addEventListener('click',()=>{el('qrModal').hidden=true});
+el('printQrBtn')?.addEventListener('click',()=>window.print());
+
 el('closeModal').onclick=()=>{el('modal').hidden=true;editingId=null};
 
 document.addEventListener('click',async e=>{
@@ -289,6 +336,7 @@ document.addEventListener('click',async e=>{
     if(error)alert(error.message);else await load();
   }
   if(act==='print')printInvoice(id);
+  if(act==='qr')showQrForArtisan(id);
 });
 
 function printInvoice(id){
