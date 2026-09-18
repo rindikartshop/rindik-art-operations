@@ -9,8 +9,8 @@
   <link rel="icon" href="rindik-art-icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="rindik-art-icon.svg">
   <title>Rindik Art — Operasional</title>
-  <link rel="stylesheet" href="admin.css?v=20260918-2">
-  <link rel="stylesheet" href="admin-fix.css?v=20260918-2">
+  <link rel="stylesheet" href="admin.css?v=20260918-3">
+  <link rel="stylesheet" href="admin-fix.css?v=20260918-3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
@@ -50,8 +50,15 @@
       <p class="workspace">WORKSPACE <b>Rindik Art</b></p>
       <nav>
         <a class="active" href="#dashboard" data-view="dashboard">▦ Ringkasan</a>
-        <a href="#orders" data-view="orders">□ Pesanan</a>
+        <a href="#customers" data-view="customers">◉ Customer / Buyer</a>
+        <a href="#products" data-view="products">▣ Produk & Stok</a>
+        <a href="#orders" data-view="orders">□ Pesanan / PO</a>
+        <a href="#production" data-view="production">⚒ Produksi</a>
+        <a href="#artisans" data-view="artisans">♙ Pengrajin</a>
         <a href="#attendance" data-view="attendance">◷ Absensi</a>
+        <a href="#invoices" data-view="invoices">▤ Invoice</a>
+        <a href="#export" data-view="export">⇧ Export & FOB</a>
+        <a href="#finance" data-view="finance">Rp Keuangan</a>
         <a href="#targets" data-view="targets">◎ Target</a>
         <a href="#settings" data-view="settings">⚙ Pengaturan</a>
       </nav>
@@ -67,25 +74,29 @@
       <section class="view active" id="dashboard">
         <div class="heading"><div><p class="eyebrow">DASHBOARD OPERASIONAL</p><h1>Selamat datang</h1><p>Ringkasan data Rindik Art secara langsung.</p></div><button class="primary" data-open="order">＋ Input Pesanan</button></div>
         <div class="cards">
-          <article><span>Rp</span><p>Total Penjualan</p><h2 id="salesTotal">Rp 0</h2></article>
-          <article><span>□</span><p>Total Pesanan</p><h2 id="ordersTotal">0</h2></article>
-          <article><span>◷</span><p>Hadir Hari Ini</p><h2 id="attendanceTotal">0</h2></article>
-          <article><span>◎</span><p>Target Aktif</p><h2 id="targetsTotal">0</h2></article>
+          <article><span>Rp</span><p>Total Penjualan</p><h2 id="salesTotal">Rp 0</h2></article><article><span>□</span><p>Total Pesanan</p><h2 id="ordersTotal">0</h2></article><article><span>◷</span><p>Hadir Hari Ini</p><h2 id="attendanceTotal">0</h2></article><article><span>◎</span><p>Target Aktif</p><h2 id="targetsTotal">0</h2></article>
         </div>
-        <section class="panel"><div class="panel-head"><div><h3>Pesanan Terbaru</h3><p>Data langsung dari database</p></div><a href="#orders" data-view="orders">Lihat semua →</a></div><div class="table"><table><thead><tr><th>PELANGGAN</th><th>PRODUK</th><th>TOTAL</th><th>STATUS</th></tr></thead><tbody id="recentOrders"></tbody></table></div></section>
+        <div class="cards"><article><span>▣</span><p>SKU Aktif</p><h2 id="productsTotal">0</h2></article><article><span>◉</span><p>Customer</p><h2 id="customersTotal">0</h2></article><article><span>⚒</span><p>Produksi Berjalan</p><h2 id="productionTotal">0</h2></article><article><span>▤</span><p>Invoice</p><h2 id="invoicesTotal">0</h2></article></div>
+        <section class="panel"><div class="panel-head"><div><h3>Pesanan Terbaru</h3><p>Data langsung dari database</p></div><a href="#orders" data-view="orders">Lihat semua →</a></div><div class="table"><table><thead><tr><th>TANGGAL</th><th>PELANGGAN</th><th>PRODUK</th><th>TOTAL</th><th>STATUS</th></tr></thead><tbody id="recentOrders"></tbody></table></div></section>
       </section>
-
+      <section class="view" id="customers"><div class="heading"><div><p class="eyebrow">CRM</p><h1>Customer / Buyer</h1><p>Buyer lokal, B2B, wholesale dan export.</p></div><button class="primary" data-open="customer">＋ Customer</button></div><section class="panel"><div class="table"><table><thead><tr><th>KODE</th><th>NAMA</th><th>PERUSAHAAN</th><th>NEGARA</th><th>TIPE</th><th>STATUS</th></tr></thead><tbody id="customersRows"></tbody></table></div></section></section>
+      <section class="view" id="products"><div class="heading"><div><p class="eyebrow">INVENTORY</p><h1>Produk & Stok</h1><p>SKU, harga jual, stok dan minimum stok.</p></div><button class="primary" data-open="product">＋ Produk</button></div><section class="panel"><div class="table"><table><thead><tr><th>SKU</th><th>PRODUK</th><th>KATEGORI</th><th>HARGA JUAL</th><th>STOK</th><th>MIN</th></tr></thead><tbody id="productsRows"></tbody></table></div></section></section>
       <section class="view" id="orders">
         <div class="heading"><div><p class="eyebrow">PENJUALAN</p><h1>Pesanan</h1><p>Catat dan pantau pesanan pelanggan.</p></div><button class="primary" data-open="order">＋ Input Pesanan</button></div>
         <section class="panel"><div class="table"><table><thead><tr><th>TANGGAL</th><th>PELANGGAN</th><th>PRODUK</th><th>TOTAL</th><th>STATUS</th></tr></thead><tbody id="ordersRows"></tbody></table></div></section>
       </section>
 
-      <section class="view" id="attendance">
+      <section class="view" id="production"><div class="heading"><div><p class="eyebrow">PRODUKSI</p><h1>Produksi</h1><p>Rencana, proses, QC dan selesai.</p></div><button class="primary" data-open="production">＋ Produksi</button></div><section class="panel"><div class="table"><table><thead><tr><th>KODE</th><th>PRODUK</th><th>QTY</th><th>PENGRAJIN</th><th>JATUH TEMPO</th><th>STATUS</th></tr></thead><tbody id="productionRows"></tbody></table></div></section></section>
+      <section class="view" id="artisans"><div class="heading"><div><p class="eyebrow">PENGRAJIN</p><h1>Data Pengrajin</h1><p>Pengrajin aktif dan kapasitas produksi.</p></div><button class="primary" data-open="artisan">＋ Pengrajin</button></div><section class="panel"><div class="table"><table><thead><tr><th>KODE</th><th>NAMA</th><th>KEAHLIAN</th><th>KAPASITAS/HARI</th><th>STATUS</th></tr></thead><tbody id="artisansRows"></tbody></table></div></section></section>
+            <section class="view" id="attendance">
         <div class="heading"><div><p class="eyebrow">SUMBER DAYA MANUSIA</p><h1>Absensi</h1><p>Catat kehadiran karyawan harian.</p></div><button class="primary" data-open="attendance">＋ Catat Absensi</button></div>
-        <section class="panel"><div class="table"><table><thead><tr><th>KARYAWAN</th><th>DIVISI</th><th>TANGGAL</th><th>CHECK-IN</th><th>STATUS</th></tr></thead><tbody id="attendanceRows"></tbody></table></div></section>
+        <section class="panel"><div class="table"><table><thead><tr><th>KARYAWAN</th><th>DIVISI</th><th>TANGGAL</th><th>CHECK-IN</th><th>CHECK-OUT</th><th>STATUS</th></tr></thead><tbody id="attendanceRows"></tbody></table></div></section>
       </section>
 
-      <section class="view" id="targets">
+      <section class="view" id="invoices"><div class="heading"><div><p class="eyebrow">TAGIHAN</p><h1>Invoice</h1><p>Draft, terkirim, sebagian, lunas dan batal.</p></div><button class="primary" data-open="invoice">＋ Invoice</button></div><section class="panel"><div class="table"><table><thead><tr><th>NO INVOICE</th><th>TANGGAL</th><th>JATUH TEMPO</th><th>TOTAL</th><th>DIBAYAR</th><th>STATUS</th></tr></thead><tbody id="invoicesRows"></tbody></table></div></section></section>
+      <section class="view" id="export"><div class="heading"><div><p class="eyebrow">EXPORT</p><h1>Export & FOB</h1><p>Shipment, CBM, karton, pcs dan FOB.</p></div><button class="primary" data-open="export">＋ Shipment</button></div><section class="panel"><div class="table"><table><thead><tr><th>KODE</th><th>NEGARA</th><th>DESTINASI</th><th>CBM</th><th>KARTON</th><th>PCS</th><th>FOB</th><th>STATUS</th></tr></thead><tbody id="exportRows"></tbody></table></div></section></section>
+      <section class="view" id="finance"><div class="heading"><div><p class="eyebrow">CASHFLOW</p><h1>Keuangan</h1><p>Pengeluaran dan pembayaran yang tercatat.</p></div><button class="primary" data-open="expense">＋ Pengeluaran</button></div><div class="cards"><article><span>↓</span><p>Total Pengeluaran</p><h2 id="expensesTotal">Rp 0</h2></article><article><span>↑</span><p>Total Pembayaran</p><h2 id="paymentsTotal">Rp 0</h2></article></div><section class="panel"><h3>Pengeluaran Terbaru</h3><div class="table"><table><thead><tr><th>TANGGAL</th><th>KATEGORI</th><th>KETERANGAN</th><th>METODE</th><th>JUMLAH</th></tr></thead><tbody id="expensesRows"></tbody></table></div></section></section>
+            <section class="view" id="targets">
         <div class="heading"><div><p class="eyebrow">KINERJA BISNIS</p><h1>Target &amp; Pencapaian</h1><p>Ukur progres sasaran bisnis Anda.</p></div><button class="primary" data-open="target">＋ Tambah Target</button></div>
         <div class="target-grid" id="targetsRows"></div>
       </section>
@@ -107,7 +118,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js?v=20260918-2"></script>
-  <script src="admin.js?v=20260918-4"></script>
+  <script src="supabase-config.js?v=20260918-3"></script>
+  <script src="admin.js?v=20260918-5"></script>
 </body>
 </html>
