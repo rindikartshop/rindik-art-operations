@@ -31,7 +31,7 @@ const forms={
     ['active','Status produk','select',0,['Ya','Tidak']],['notes','Catatan','text']
   ]},
   order:{table:'orders',title:'Pesanan / PO',eyebrow:'PENJUALAN',fields:[
-    ['order_code','Kode PO / Pesanan','text'],['customer_id','Customer / Buyer','customer',1],
+    ['order_code','Kode PO / Pesanan','text'],['order_date','Tanggal order','date'],['due_date','Target kirim','date',1],['customer_id','Customer / Buyer','customer',1],
     ['sku','Produk / SKU','product',1],['quantity','Qty','number',1],['unit_price','Harga / pcs','number',1],
     ['total_amount','Total','number',1],['dp_amount','DP','number'],['status','Status','select',0,['Baru','Menunggu Pembayaran','Diproduksi','Siap Kirim','Selesai','Batal']],
     ['payment_status','Pembayaran','select',0,['Belum Lunas','DP','Lunas']],['currency','Mata uang','select',0,['IDR','USD']],
@@ -186,6 +186,18 @@ function render(){
   el('orderValue')&&(el('orderValue').textContent=money(orderValue));
   el('orderDp')&&(el('orderDp').textContent=money(o.reduce((n,x)=>n+Number(x.dp_amount||0),0)));
   el('orderOutstanding')&&(el('orderOutstanding').textContent=money(o.reduce((n,x)=>n+Math.max(0,Number(x.total_amount||0)-Number(x.dp_amount||0)),0)));
+  const todayMs=new Date(today()+'T00:00:00').getTime();
+  const dueSoon=o.filter(x=>x.due_date&&x.status!=='Selesai'&&x.status!=='Batal').map(x=>{const d=new Date(x.due_date+'T00:00:00').getTime(),days=Math.ceil((d-todayMs)/86400000);return {...x,days}}).filter(x=>x.days<=7);
+  el('orderDueSoon')&&(el('orderDueSoon').textContent=dueSoon.length);
+  const alertBox=el('orderAlerts');
+  if(alertBox){
+    alertBox.hidden=dueSoon.length===0;
+    alertBox.innerHTML=dueSoon.sort((a,b)=>a.days-b.days).map(x=>{
+      const label=x.days<0?'TERLAMBAT '+Math.abs(x.days)+' hari':x.days===0?'KIRIM HARI INI':x.days===1?'KIRIM BESOK':'Kirim '+x.days+' hari lagi';
+      const cls=x.days<0?'danger-alert':x.days<=2?'urgent-alert':'soon-alert';
+      return '<div class="order-alert '+cls+'"><b>'+esc(label)+'</b><span>'+esc(x.order_code||'PO')+' · '+esc(x.customer_name||'Customer')+' · '+esc(x.product_name||'Produk')+'</span><small>Target kirim: '+date(x.due_date)+'</small></div>';
+    }).join('');
+  }
   el('productionCount')&&(el('productionCount').textContent=data.production.length);
   el('productionPlanned')&&(el('productionPlanned').textContent=data.production.reduce((n,x)=>n+Number(x.qty_planned||0),0));
   el('productionCompleted')&&(el('productionCompleted').textContent=data.production.reduce((n,x)=>n+Number(x.qty_completed||0),0));
