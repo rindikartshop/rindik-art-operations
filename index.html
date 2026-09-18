@@ -9,8 +9,8 @@
   <link rel="icon" href="rindik-art-icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="rindik-art-icon.svg">
   <title>Rindik Art — Operasional</title>
-  <link rel="stylesheet" href="admin.css?v=20260919-8">
-  <link rel="stylesheet" href="admin-fix.css?v=20260919-8">
+  <link rel="stylesheet" href="admin.css?v=20260919-9">
+  <link rel="stylesheet" href="admin-fix.css?v=20260919-9">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
@@ -89,8 +89,8 @@
       <section class="view" id="production"><div class="heading"><div><p class="eyebrow">PRODUKSI</p><h1>Produksi</h1><p>Rencana, proses, QC dan selesai.</p></div><button class="primary" data-open="production">＋ Produksi</button></div><section class="panel"><div class="table"><table><thead><tr><th>KODE</th><th>PRODUK</th><th>QTY</th><th>PENGRAJIN</th><th>JATUH TEMPO</th><th>STATUS</th></tr></thead><tbody id="productionRows"></tbody></table></div></section></section>
       <section class="view" id="artisans"><div class="heading"><div><p class="eyebrow">PENGRAJIN</p><h1>Data Pengrajin</h1><p>Pengrajin aktif dan kapasitas produksi.</p></div><button class="primary" data-open="artisan">＋ Pengrajin</button></div><section class="panel"><div class="table"><table><thead><tr><th>KODE</th><th>NAMA</th><th>KEAHLIAN</th><th>KAPASITAS/HARI</th><th>STATUS</th></tr></thead><tbody id="artisansRows"></tbody></table></div></section></section>
             <section class="view" id="attendance">
-        <div class="heading"><div><p class="eyebrow">SUMBER DAYA MANUSIA</p><h1>Absensi</h1><p>Catat kehadiran karyawan harian.</p></div><button class="primary" data-open="attendance">＋ Catat Absensi</button></div>
-        <section class="panel"><div class="table"><table><thead><tr><th>KARYAWAN</th><th>DIVISI</th><th>TANGGAL</th><th>CHECK-IN</th><th>CHECK-OUT</th><th>STATUS</th></tr></thead><tbody id="attendanceRows"></tbody></table></div></section>
+        <div class="heading"><div><p class="eyebrow">SUMBER DAYA MANUSIA</p><h1>Absensi</h1><p>Catat kehadiran karyawan harian.</p></div><div class="heading-actions"><button class="primary" id="scanAttendanceBtn" type="button">▣ Scan QR</button><button class="secondary" data-open="attendance">＋ Catat Manual</button></div></div>
+        <section class="panel"><div class="table"><table><thead><tr><th>KARYAWAN</th><th>DIVISI</th><th>TANGGAL</th><th>CHECK-IN</th><th>CHECK-OUT</th><th>STATUS</th><th>AKSI</th></tr></thead><tbody id="attendanceRows"></tbody></table></div></section>
       </section>
 
       <section class="view" id="invoices"><div class="heading"><div><p class="eyebrow">TAGIHAN</p><h1>Invoice</h1><p>Draft, terkirim, sebagian, lunas dan batal.</p></div><button class="primary" data-open="invoice">＋ Invoice</button></div><section class="panel"><div class="table"><table><thead><tr><th>NO INVOICE</th><th>TANGGAL</th><th>JATUH TEMPO</th><th>TOTAL</th><th>DIBAYAR</th><th>STATUS</th></tr></thead><tbody id="invoicesRows"></tbody></table></div></section></section>
@@ -108,6 +108,10 @@
     </main>
   </div>
 
+  <div class="modal" id="qrModal" hidden><div class="modal-card qr-card"><button type="button" id="closeQrModal">×</button><p class="eyebrow">ABSENSI QR</p><h2 id="qrTitle">QR Absensi</h2><p id="qrSub">Scan QR ini untuk absensi.</p><div id="qrCode" class="qr-code"></div><button class="secondary" type="button" id="printQrBtn">Cetak QR</button></div></div>
+
+  <div class="modal" id="scannerModal" hidden><div class="modal-card scanner-card"><button type="button" id="closeScanner">×</button><p class="eyebrow">ABSENSI</p><h2>Scan QR Karyawan</h2><p id="scanMessage">Arahkan kamera ke QR karyawan.</p><div id="qr-reader"></div><button class="secondary" type="button" id="stopScanner">Tutup Kamera</button></div></div>
+
   <div class="modal" id="modal" hidden>
     <form class="modal-card" id="dataForm">
       <button type="button" id="closeModal">×</button>
@@ -119,7 +123,9 @@
 
   <script>window.__RINDIK_RECOVERY_ROUTE=location.pathname.replace(/\/$/,"").endsWith("/reset-password")||location.hash.includes("type=recovery")||location.hash.includes("access_token=");if(window.__RINDIK_RECOVERY_ROUTE){document.getElementById("authScreen").hidden=true;document.getElementById("app").hidden=true;document.getElementById("recoveryScreen").hidden=false;}</script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <script src="supabase-config.js?v=20260919-1"></script>
-  <script src="admin.js?v=20260919-7"></script>
+  <script src="admin.js?v=20260919-8"></script>
 </body>
 </html>
