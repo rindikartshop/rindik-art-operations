@@ -4,7 +4,7 @@ const db=window.supabase.createClient(cfg.url,cfg.publishableKey);
 
 const data={
   orders:[],attendance:[],targets:[],customers:[],products:[],production:[],agenda:[],
-  artisans:[],invoices:[],exportShipments:[],expenses:[],payments:[],companySettings:null
+  artisans:[],invoices:[],exportShipments:[],expenses:[],payments:[],employees:[],payroll:[],companySettings:null
 };
 let mode='login',activeForm='',editingId=null,starting=false;
 
@@ -75,6 +75,8 @@ const forms={
     ['amount','Jumlah','number',1],['payment_method','Metode','select',0,['Cash','Transfer','Bank','Lainnya']],['notes','Catatan','text']
   ]},
   agenda:{table:'agenda_events',title:'Agenda & Kalender',eyebrow:'AGENDA',fields:[['title','Judul agenda','text',1],['agenda_date','Tanggal','date',1],['start_time','Jam mulai','time'],['end_time','Jam selesai','time'],['category','Kategori','select',0,['Agenda','Follow-up Customer','Produksi','Pengiriman','Meeting','Pembayaran','Pribadi','Lainnya']],['reminder_minutes','Ingatkan (menit sebelum)','number'],['status','Status','select',0,['Terjadwal','Selesai','Batal']],['notes','Catatan','text']]},
+  employee:{table:'employees',title:'Karyawan',eyebrow:'SDM',fields:[['employee_code','Kode karyawan','text'],['name','Nama','text',1],['division','Divisi','text'],['position','Jabatan','text'],['phone','Telepon','text'],['address','Alamat','text'],['join_date','Tanggal bergabung','date'],['salary_type','Tipe gaji','select',0,['Bulanan','Harian','Borongan']],['base_salary','Gaji pokok','number'],['overtime_rate','Tarif lembur / jam','number'],['status','Status','select',0,['Aktif','Nonaktif']],['notes','Catatan','text']]},
+  payrollForm:{table:'payroll',title:'Payroll',eyebrow:'PENGGAJIAN',fields:[['employee_id','Karyawan','employee',1],['payroll_month','Bulan payroll','date',1],['base_salary','Gaji pokok','number',1],['overtime_hours','Jam lembur','number'],['overtime_amount','Nilai lembur','number'],['allowance','Tunjangan','number'],['deduction','Potongan','number'],['net_salary','Gaji netto','number',1],['payment_date','Tanggal bayar','date'],['payment_status','Status pembayaran','select',0,['Belum Dibayar','Dibayar']],['notes','Catatan','text']]},
   target:{table:'business_targets',title:'Target Bisnis',eyebrow:'TARGET',fields:[
     ['title','Nama target','text',1],['target_value','Nilai target','number',1],['current_value','Realisasi','number'],
     ['unit','Satuan','select',0,['Rp','pcs','%','order']],['period_label','Periode','text']
@@ -103,6 +105,7 @@ function relationOptions(type,value){
   if(type==='customer') return '<select name="__x"><option value="">Pilih customer</option>'+data.customers.map(x=>'<option value="'+esc(x.id)+'" '+(String(value)===String(x.id)?'selected':'')+'>'+esc(x.name)+(x.company_name?' · '+esc(x.company_name):'')+'</option>').join('')+'</select>';
   if(type==='product') return '<select name="__x"><option value="">Pilih produk</option>'+data.products.filter(x=>x.active!==false).map(x=>'<option value="'+esc(x.sku)+'" '+(String(value)===String(x.sku)?'selected':'')+'>'+esc(x.sku)+' · '+esc(x.name)+' · '+money(x.selling_price)+'</option>').join('')+'</select>';
   if(type==='order') return '<select name="__x"><option value="">Pilih PO</option>'+data.orders.map(x=>'<option value="'+esc(x.id)+'" '+(String(value)===String(x.id)?'selected':'')+'>'+esc(x.order_code||x.id)+' · '+esc(x.customer_name||'')+'</option>').join('')+'</select>';
+  if(type==='employee') return '<select name="__x"><option value="">Pilih karyawan</option>'+data.employees.filter(x=>x.status!=='Nonaktif').map(x=>'<option value="'+esc(x.id)+'" '+(String(value)===String(x.id)?'selected':'')+'>'+esc(x.name)+' · '+esc(x.position||'')+'</option>').join('')+'</select>';
   if(type==='invoice') return '<select name="__x"><option value="">Pilih invoice</option>'+data.invoices.map(x=>'<option value="'+esc(x.id)+'" '+(String(value)===String(x.id)?'selected':'')+'>'+esc(x.invoice_no)+' · '+money(x.total)+'</option>').join('')+'</select>';
   if(type==='product_id') return '<select name="__x"><option value="">Pilih produk</option>'+data.products.map(x=>'<option value="'+esc(x.id)+'" '+(String(value)===String(x.id)?'selected':'')+'>'+esc(x.sku)+' · '+esc(x.name)+'</option>').join('')+'</select>';
   if(type==='artisan_id') return '<select name="__x"><option value="">Pilih pengrajin</option>'+data.artisans.filter(x=>x.status!=='Nonaktif').map(x=>'<option value="'+esc(x.id)+'" '+(String(value)===String(x.id)?'selected':'')+'>'+esc(x.name)+' · '+esc(x.artisan_code||'')+'</option>').join('')+'</select>';
@@ -223,6 +226,7 @@ function render(){
   el('shipmentFob')&&(el('shipmentFob').textContent=fobCurrencies.length>1?'Multi-currency':new Intl.NumberFormat('id-ID',{maximumFractionDigits:2}).format(data.exportShipments.reduce((n,x)=>n+Number(x.fob_total||0),0))+' '+(fobCurrencies[0]||'USD'));
   renderAgenda();
 
+  el('employeeCount')&&(el('employeeCount').textContent=data.employees.length);el('employeeActive')&&(el('employeeActive').textContent=data.employees.filter(x=>x.status==='Aktif').length);el('employeePayrollBase')&&(el('employeePayrollBase').textContent=money(data.employees.filter(x=>x.status==='Aktif').reduce((n,x)=>n+Number(x.base_salary||0),0)));const payrollTotal=data.payroll.reduce((n,x)=>n+Number(x.net_salary||0),0),payrollPaid=data.payroll.filter(x=>x.payment_status==='Dibayar').reduce((n,x)=>n+Number(x.net_salary||0),0);el('payrollTotal')&&(el('payrollTotal').textContent=money(payrollTotal));el('payrollPaid')&&(el('payrollPaid').textContent=money(payrollPaid));el('payrollDue')&&(el('payrollDue').textContent=money(Math.max(0,payrollTotal-payrollPaid)));el('employeesRows')&&(el('employeesRows').innerHTML=data.employees.map(x=>'<tr><td>'+esc(x.employee_code||'—')+'</td><td>'+esc(x.name)+'</td><td>'+esc(x.division||'—')+'</td><td>'+esc(x.position||'—')+'</td><td>'+esc(x.salary_type||'—')+'</td><td>'+money(x.base_salary)+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td>'+action('employees',x.id)+'</tr>').join('')||'<tr><td colspan="8">Belum ada karyawan.</td></tr>');el('payrollRows')&&(el('payrollRows').innerHTML=data.payroll.map(x=>'<tr><td>'+date(x.payroll_month)+'</td><td>'+esc(data.employees.find(e=>String(e.id)===String(x.employee_id))?.name||'—')+'</td><td>'+money(x.base_salary)+'</td><td>'+Number(x.overtime_hours||0)+' jam / '+money(x.overtime_amount)+'</td><td>'+money(x.allowance)+'</td><td>'+money(x.deduction)+'</td><td>'+money(x.net_salary)+'</td><td><span class="tag">'+esc(x.payment_status||'—')+'</span></td>'+action('payroll',x.id)+'</tr>').join('')||'<tr><td colspan="9">Belum ada payroll.</td></tr>');
   const orderCells=x=>'<td>'+date(x.order_date)+'</td><td>'+esc(x.customer_name)+'</td><td>'+esc(x.product_name)+'</td><td>'+money(x.total_amount)+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td>';
   el('recentOrders').innerHTML=o.slice(0,5).map(x=>'<tr>'+orderCells(x)+'</tr>').join('')||'<tr><td colspan="5">Belum ada pesanan.</td></tr>';
   el('ordersRows').innerHTML=o.map(x=>'<tr>'+orderCells(x)+action('orders',x.id)+'</tr>').join('')||'<tr><td colspan="6">Belum ada pesanan.</td></tr>';
@@ -253,7 +257,7 @@ async function load(){
     expenses:db.from('expenses').select('*').order('expense_date',{ascending:false}),
     payments:db.from('payments').select('*').order('payment_date',{ascending:false}),
     settings:db.from('app_settings').select('*').eq('id','company').maybeSingle(),
-    agenda:db.from('agenda_events').select('*').order('agenda_date',{ascending:true}).order('start_time',{ascending:true})
+    employees:db.from('employees').select('*').order('created_at',{ascending:false}),payroll:db.from('payroll').select('*').order('payroll_month',{ascending:false}),agenda:db.from('agenda_events').select('*').order('agenda_date',{ascending:true}).order('start_time',{ascending:true})
   };
   const es=Object.entries(q),rs=await Promise.all(es.map(([,x])=>x)),bad=rs.find(x=>x.error);
   if(bad){console.error(bad.error);msg('settingsMessage',bad.error.message||'Data belum bisa dimuat.');return false}
@@ -291,7 +295,7 @@ el('dataForm').onsubmit=async e=>{
     if(!cust||!prod){msg('formMessage','Pilih customer dan produk yang valid.');return}
     raw.customer_name=cust.name;raw.product_name=prod.name;
   }
-  if(activeForm==='product'){
+  if(activeForm==='employee'&&!raw.employee_code)raw.employee_code='EMP-'+String(data.employees.length+1).padStart(3,'0');if(activeForm==='payroll'){raw.base_salary=Number(raw.base_salary||0);raw.overtime_hours=Number(raw.overtime_hours||0);raw.overtime_amount=Number(raw.overtime_amount||0);raw.allowance=Number(raw.allowance||0);raw.deduction=Number(raw.deduction||0);raw.net_salary=raw.base_salary+raw.overtime_amount+raw.allowance-raw.deduction}if(activeForm==='product'){
     raw.cost_price=Number(raw.cost_price||0);raw.selling_price=Number(raw.selling_price||0);raw.stock=Number(raw.stock||0);raw.min_stock=Number(raw.min_stock||0);raw.active=raw.active!=='Tidak';
   }
   if(activeForm==='customer'&&!raw.customer_code)raw.customer_code='CUS-'+String(data.customers.length+1).padStart(3,'0');
@@ -382,7 +386,7 @@ document.addEventListener('click',async e=>{
   const b=e.target.closest('[data-action]');if(!b)return;
   const act=b.dataset.action,id=b.dataset.id,table=b.dataset.table;
   if(act==='edit'){
-    const key={production_orders:'production',export_shipments:'export',business_targets:'target',orders:'order',customers:'customer',products:'product',artisans:'artisan',attendance:'attendance',invoices:'invoice',expenses:'expense',payments:'payment'}[table];
+    const key={production_orders:'production',export_shipments:'export',business_targets:'target',orders:'order',employees:'employee',payroll:'payrollForm',customers:'customer',products:'product',artisans:'artisan',attendance:'attendance',invoices:'invoice',expenses:'expense',payments:'payment'}[table];
     const row=data[key]?.find(x=>String(x.id)===String(id));if(row)openForm(key,row);
   }
   if(act==='delete'){
@@ -401,7 +405,7 @@ document.addEventListener('click',async e=>{
   if(act==='qr')showQrForArtisan(id);
 });
 
-function printInvoice(id){
+function oldPrintInvoice(id){
   const x=data.invoices.find(v=>String(v.id)===String(id));if(!x)return;
   const w=window.open('','_blank','width=900,height=1000');if(!w){alert('Izinkan pop-up untuk mencetak invoice.');return}
   const c=data.customers.find(v=>String(v.id)===String(x.customer_id));
@@ -439,3 +443,14 @@ db.auth.onAuthStateChange((event,session)=>{
 el('logout').onclick=async()=>{await db.auth.signOut();location.href='/'};
 window.addEventListener('load',start);
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=20260919-7').catch(console.warn));
+async function openInvoicePreview(id){
+ const x=data.invoices.find(v=>String(v.id)===String(id));if(!x)return;
+ const c=data.customers.find(v=>String(v.id)===String(x.customer_id)),o=data.orders.find(v=>String(v.id)===String(x.order_id)),p=data.products.find(v=>String(v.sku)===String(o?.sku)),company=data.companySettings||{},paid=Number(x.paid_amount||0),total=Number(x.total||0);
+ const logo='https://app.rindikartshop.com/rindik-art-logo.svg';
+ el('invoicePreview').innerHTML='<div class="invoice-paper"><img class="inv-watermark" src="'+logo+'"><div class="inv-head"><div class="inv-brand"><img src="'+logo+'"><div><h2>'+esc(company.company_name||'PT DUNIA KERAJINAN ROTAN LOMBOK')+'</h2><p>crafted with love and care</p><small>NATURAL · SUSTAINABLE · TIMELESS</small></div></div><div class="inv-contact">'+esc(company.company_address||'Jl. Pendem, Kec. Janapria, Lombok Tengah, Praya, Prov. Nusa Tenggara Barat, Indonesia 83554')+'<br>Telp / WA : '+esc(company.company_phone||'0878-5558-3831')+'</div></div><div class="inv-title">INVOICE</div><div class="inv-meta"><div><b>Kepada Yth. :</b><br>'+esc(c?.name||'Customer')+'<br>'+esc(c?.city||c?.country||'')+'</div><div>No. : <b>'+esc(x.invoice_no)+'</b><br>Tanggal : '+date(x.issue_date)+'</div></div><table class="inv-items"><tr><th>NO</th><th>NAMA BARANG</th><th>QTY</th><th>HARGA</th><th>TOTAL</th></tr><tr><td>1</td><td>'+(p?.image_url?'<img class="inv-product-img" src="'+esc(p.image_url)+'"><br>':'')+'<b>'+esc(o?.product_name||'Pesanan')+'</b></td><td>'+Number(o?.quantity||1)+'</td><td>'+money(o?.unit_price||x.subtotal)+'</td><td>'+money(x.subtotal)+'</td></tr></table><div class="inv-totals"><div><span>TOTAL</span><b>'+money(total)+'</b></div><div><span>DP / Dibayar</span><b>'+money(paid)+'</b></div><div class="inv-grand"><span>SISA PEMBAYARAN</span><b>'+money(Math.max(0,total-paid))+'</b></div></div><p style="margin-top:35px">Demikian disampaikan, terima kasih atas kepercayaan dan kerjasama kepada kami.</p><div class="inv-pay-sign"><div class="inv-bank"><b>Pembayaran melalui rekening:</b><p><b>'+esc(company.bank_name||'Bank Mandiri')+'</b><br>'+esc(company.bank_account||'1610009887634')+'<br>a.n. '+esc(company.bank_holder||'M. JALALUDIN')+'</p></div><div class="inv-sign">Hormat kami,<br><b>'+esc(company.company_name||'PT. Dunia Kerajinan Rotan Lombok')+'</b><br><br><img class="inv-stamp" src="'+logo+'"><br><b>M. Jalaludin</b><br>Direktur</div></div><div class="inv-footer"><b>Crafting a Better Tomorrow</b><br>INDONESIAN RATTAN FOR A BRIGHTER WORLD<br>WA '+esc(company.company_phone||'0878-5558-3831')+' · '+esc(company.company_email||'rindikartshop@gmail.com')+' · Instagram '+esc(company.instagram||'rindik_artshop')+' · '+esc(company.company_website||'www.rindikartshop.com')+'</div></div>';
+ el('invoicePreviewModal').hidden=false;
+ el('printInvoiceBtn').onclick=()=>{const w=window.open('','_blank');if(!w){alert('Izinkan pop-up untuk mencetak invoice.');return}w.document.write('<html><head><title>'+esc(x.invoice_no)+'</title><style>@page{size:A4;margin:0}body{margin:0}.invoice-paper{width:210mm;min-height:297mm;padding:12mm;box-sizing:border-box;font-family:Arial;color:#27231d}.inv-head{display:flex;justify-content:space-between;border-bottom:2px solid #4b3420;padding-bottom:10px}.inv-brand{display:flex;gap:12px;align-items:center}.inv-brand img{width:75px;height:75px}.inv-brand h2{margin:0;font:700 21px Georgia}.inv-brand p{margin:3px 0;color:#7b5c2c}.inv-contact{text-align:right;font-size:11px;max-width:250px}.inv-title{text-align:center;font:700 30px Georgia;margin:18px}.inv-meta{display:flex;justify-content:space-between;font-size:13px}.inv-items{width:100%;border-collapse:collapse;margin-top:16px}.inv-items th,.inv-items td{border:1px solid #333;padding:9px}.inv-items th{background:#eee6d4}.inv-product-img{width:70px;height:70px;object-fit:contain}.inv-totals{margin-left:auto;width:300px;margin-top:18px}.inv-totals div{display:flex;justify-content:space-between;padding:5px}.inv-grand{border-top:2px solid #4b3420;font-weight:bold}.inv-pay-sign{display:grid;grid-template-columns:1fr 1fr;gap:25px;margin-top:35px}.inv-bank{border:1px solid #b9aa91;padding:12px}.inv-sign{text-align:center}.inv-stamp{width:95px;height:95px}.inv-footer{margin-top:35px;border-top:1px solid #b9aa91;padding-top:10px;font-size:10px}</style></head><body>'+el('invoicePreview').innerHTML+'<script>setTimeout(()=>window.print(),300)</script></body></html>');w.document.close()};
+}
+function printInvoice(id){openInvoicePreview(id)}
+el('closeInvoicePreview')?.addEventListener('click',()=>el('invoicePreviewModal').hidden=true);
+el('closeInvoicePreview2')?.addEventListener('click',()=>el('invoicePreviewModal').hidden=true);
