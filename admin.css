@@ -317,3 +317,6 @@ td{color:#4a4035;border-color:#eee7dc}
 @media(max-width:700px){
   .app aside{box-shadow:10px 0 30px rgba(83,65,42,.16)}
 }
+
+/* Fast searchable relations */
+.relation-search-wrap{display:grid;gap:6px}.relation-search{width:100%;box-sizing:border-box;padding:11px 13px;border:1px solid #d8e0db;border-radius:10px;background:#fff;font:inherit;outline:none}.relation-search:focus{border-color:#6b8f78;box-shadow:0 0 0 3px rgba(107,143,120,.12)}.relation-search::placeholder{color:#8a958e}.relation-add-wrap{display:grid;gap:7px}.field-help{display:block;color:#6f7b73;font-size:12px;line-height:1.4}
