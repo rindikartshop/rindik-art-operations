@@ -219,6 +219,19 @@ function openForm(type,row=null){
     prodSel?.addEventListener('change',fillRate);artisanSel?.addEventListener('change',fillRate);qty?.addEventListener('input',()=>{if(total)total.value=Number(qty.value||0)*Number(price?.value||0)});price?.addEventListener('input',()=>{if(total)total.value=Number(qty?.value||0)*Number(price.value||0)});
     fillRate();
   }
+  if(type==='payrollForm'){
+    const empSel=fields.querySelector('[name="employee_id"]'), month=fields.querySelector('[name="payroll_month"]'), base=fields.querySelector('[name="base_salary"]');
+    const calcDaily=()=>{
+      const emp=data.employees.find(x=>String(x.id)===String(empSel?.value));
+      if(!emp||!base)return;
+      if(emp.salary_type==='Harian'){
+        const ym=String(month?.value||today()).slice(0,7);
+        const days=data.attendance.filter(a=>String(a.employee_id)===String(emp.id)&&String(a.attendance_date||'').startsWith(ym)&&['Hadir','Terlambat'].includes(a.status)).length;
+        base.value=days*Number(emp.base_salary||0);
+      }else if(!editingId){base.value=Number(emp.base_salary||0);}
+    };
+    empSel?.addEventListener('change',calcDaily);month?.addEventListener('change',calcDaily);calcDaily();
+  }
   if(type==='order'){
     const ps=fields.querySelector('[name="sku"]'),q=fields.querySelector('[name="quantity"]'),u=fields.querySelector('[name="unit_price"]'),tot=fields.querySelector('[name="total_amount"]');
     const calc=()=>{const p=data.products.find(x=>String(x.sku)===String(ps?.value));if(p&&!u.value)u.value=Number(p.selling_price||0);if(tot)tot.value=Number(q?.value||0)*Number(u?.value||0)};
