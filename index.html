@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="rindik-art-icon.svg">
   <title>Rindik Art — Operasional</title>
   <link rel="stylesheet" href="admin.css?v=20260919-18">
-  <link rel="stylesheet" href="admin-fix.css?v=20260919-17">
+  <link rel="stylesheet" href="admin-fix.css?v=20260919-18">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
@@ -125,8 +125,14 @@
   </div>
 
   <script>window.__RINDIK_RECOVERY_ROUTE=location.pathname.replace(/\/$/,"").endsWith("/reset-password")||location.hash.includes("type=recovery")||location.hash.includes("access_token=");if(window.__RINDIK_RECOVERY_ROUTE){document.getElementById("authScreen").hidden=true;document.getElementById("app").hidden=true;document.getElementById("recoveryScreen").hidden=false;}</script>
+  <script>
+  // One-time cleanup of the old PWA worker; do not clear caches on every load.
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{});
+  }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js?v=20260919-1"></script>
-  <script src="admin.js?v=20260919-21"></script>
+  <script src="admin.js?v=20260919-22"></script>
 </body>
 </html>
