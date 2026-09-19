@@ -4,7 +4,7 @@ const db=window.supabase.createClient(cfg.url,cfg.publishableKey);
 
 const data={
   orders:[],attendance:[],targets:[],customers:[],products:[],production:[],agenda:[],
-  artisans:[],invoices:[],exportShipments:[],expenses:[],payments:[],employees:[],payroll:[],companySettings:null
+  artisans:[],artisanRates:[],invoices:[],exportShipments:[],expenses:[],payments:[],employees:[],payroll:[],companySettings:null
 };
 let mode='login',activeForm='',editingId=null,starting=false,appStarting=false;data.role='Owner/Admin';
 
@@ -37,18 +37,19 @@ const forms={
     ['payment_status','Pembayaran','select',0,['Belum Lunas','DP','Lunas']],['currency','Mata uang','select',0,['IDR','USD']],
     ['notes','Catatan','text']
   ]},
-  production:{table:'production_orders',title:'Produksi',eyebrow:'PRODUKSI',fields:[
+  production:{table:'production_orders',title:'Produksi & Pembelian dari Pengrajin',eyebrow:'PRODUKSI · HARGA BELI PENGRAJIN',fields:[
     ['production_code','Kode produksi','text',1],['order_id','Pesanan / PO','order'],['product_id','Produk','product_id'],
-    ['artisan_id','Pengrajin','artisan_id'],['qty_planned','Qty rencana','number',1],['qty_completed','Qty selesai','number'],
+    ['artisan_id','Pengrajin (penganyam)','artisan_id'],['qty_planned','Qty rencana','number',1],['qty_completed','Qty selesai','number'],
+    ['purchase_price','Harga beli pengrajin / pcs','number',1],['purchase_total','Total nilai beli pengrajin','number'],['artisan_payment_status','Pembayaran pengrajin','select',0,['Belum Dibayar','Sebagian','Dibayar']],
     ['start_date','Mulai','date'],['due_date','Jatuh tempo','date'],['status','Status','select',0,['Rencana','Diproses','QC','Selesai','Batal']],['notes','Catatan','text']
   ]},
-  artisan:{table:'artisans',title:'Pengrajin',eyebrow:'PENGRAJIN',fields:[
-    ['artisan_code','Kode','text'],['name','Nama','text',1],['division','Divisi','text'],['phone','Telepon','text'],
-    ['address','Alamat','text'],['skill','Keahlian','text'],['status','Status','select',0,['Aktif','Nonaktif']],
-    ['joined_date','Bergabung','date'],['daily_capacity','Kapasitas / hari','number'],['notes','Catatan','text']
+  artisan:{table:'artisans',title:'Pengrajin Anyaman',eyebrow:'PENGRAJIN · BORONGAN PRODUK',fields:[
+    ['artisan_code','Kode pengrajin','text'],['name','Nama pengrajin','text',1],['division','Bagian','text'],['phone','Telepon','text'],
+    ['address','Alamat','text'],['skill','Keahlian anyaman','text'],['work_type','Sistem kerja','select',0,['Borongan Produk','Per Produk']],['status','Status','select',0,['Aktif','Nonaktif']],
+    ['joined_date','Bergabung','date'],['daily_capacity','Kapasitas / hari (pcs)','number'],['notes','Catatan','text']
   ]},
-  attendance:{table:'attendance',title:'Absensi',eyebrow:'SDM',fields:[
-    ['employee_name','Nama karyawan','text',1],['division','Divisi','text'],
+  attendance:{table:'attendance',title:'Absensi Karyawan Toko',eyebrow:'KARYAWAN · GAJI HARIAN',fields:[
+    ['employee_id','Karyawan','employee',1],['employee_name','Nama karyawan','text'],['division','Divisi','text'],
     ['status','Status','select',1,['Hadir','Terlambat','Izin','Sakit']],['notes','Catatan','text']
   ]},
   invoice:{table:'invoices',title:'Invoice',eyebrow:'TAGIHAN',fields:[
@@ -75,7 +76,7 @@ const forms={
     ['amount','Jumlah','number',1],['payment_method','Metode','select',0,['Cash','Transfer','Bank','Lainnya']],['notes','Catatan','text']
   ]},
   agenda:{table:'agenda_events',title:'Agenda & Kalender',eyebrow:'AGENDA',fields:[['title','Judul agenda','text',1],['agenda_date','Tanggal','date',1],['start_time','Jam mulai','time'],['end_time','Jam selesai','time'],['category','Kategori','select',0,['Agenda','Follow-up Customer','Produksi','Pengiriman','Meeting','Pembayaran','Pribadi','Lainnya']],['reminder_minutes','Ingatkan (menit sebelum)','number'],['status','Status','select',0,['Terjadwal','Selesai','Batal']],['notes','Catatan','text']]},
-  employee:{table:'employees',title:'Karyawan',eyebrow:'SDM',fields:[['employee_code','Kode karyawan','text'],['name','Nama','text',1],['division','Divisi','text'],['position','Jabatan','text'],['phone','Telepon','text'],['address','Alamat','text'],['join_date','Tanggal bergabung','date'],['salary_type','Tipe gaji','select',0,['Bulanan','Harian','Borongan']],['base_salary','Gaji pokok','number'],['overtime_rate','Tarif lembur / jam','number'],['status','Status','select',0,['Aktif','Nonaktif']],['notes','Catatan','text']]},
+  employee:{table:'employees',title:'Karyawan Toko',eyebrow:'KARYAWAN · GAJI HARIAN',fields:[['employee_code','Kode karyawan','text'],['name','Nama','text',1],['employment_type','Jenis tenaga kerja','select',0,['Karyawan Toko','Admin','Sales','Gudang','Lainnya']],['division','Divisi','text'],['position','Jabatan','text'],['phone','Telepon','text'],['address','Alamat','text'],['join_date','Tanggal bergabung','date'],['salary_type','Tipe gaji','select',0,['Harian','Bulanan','Borongan']],['base_salary','Upah dasar / hari atau bulan','number'],['overtime_rate','Tarif lembur / jam','number'],['status','Status','select',0,['Aktif','Nonaktif']],['notes','Catatan','text']]},
   payrollForm:{table:'payroll',title:'Payroll',eyebrow:'PENGGAJIAN',fields:[['employee_id','Karyawan','employee',1],['payroll_month','Bulan payroll','date',1],['base_salary','Gaji pokok','number',1],['overtime_hours','Jam lembur','number'],['overtime_amount','Nilai lembur','number'],['allowance','Tunjangan','number'],['deduction','Potongan','number'],['net_salary','Gaji netto','number',1],['payment_date','Tanggal bayar','date'],['payment_status','Status pembayaran','select',0,['Belum Dibayar','Dibayar']],['notes','Catatan','text']]},
   target:{table:'business_targets',title:'Target Bisnis',eyebrow:'TARGET',fields:[
     ['title','Nama target','text',1],['target_value','Nilai target','number',1],['current_value','Realisasi','number'],
@@ -132,7 +133,7 @@ function fieldHtml(field,row){
     return '<label>'+label+html+'</label>';
   }
   if(type==='select') return '<label>'+label+'<select name="'+name+'"'+req+'>'+choices.map(o=>'<option value="'+esc(o)+'" '+(String(value)===String(o)?'selected':'')+'>'+esc(o)+'</option>').join('')+'</select></label>';
-  const readonly=name==='total_amount'?' readonly':'';
+  const readonly=['total_amount','purchase_total'].includes(name)?' readonly':'';
   return '<label>'+label+'<input name="'+name+'" type="'+type+'" value="'+esc(value)+'"'+req+readonly+'></label>';
 }
 
@@ -309,6 +310,7 @@ async function load(){
     products:db.from('products').select('*').order('created_at',{ascending:false}),
     production:db.from('production_orders').select('*').order('created_at',{ascending:false}),
     artisans:db.from('artisans').select('*').order('created_at',{ascending:false}),
+    artisanRates:db.from('artisan_product_rates').select('*').order('created_at',{ascending:false}),
     invoices:db.from('invoices').select('*').order('created_at',{ascending:false}),
     exportShipments:db.from('export_shipments').select('*').order('created_at',{ascending:false}),
     expenses:db.from('expenses').select('*').order('expense_date',{ascending:false}),
@@ -352,7 +354,7 @@ el('dataForm').onsubmit=async e=>{
     if(!cust||!prod){msg('formMessage','Pilih customer dan produk yang valid.');return}
     raw.customer_name=cust.name;raw.product_name=prod.name;
   }
-  if(activeForm==='employee'&&!raw.employee_code)raw.employee_code='EMP-'+String(data.employees.length+1).padStart(3,'0');if(activeForm==='payroll'){raw.base_salary=Number(raw.base_salary||0);raw.overtime_hours=Number(raw.overtime_hours||0);raw.overtime_amount=Number(raw.overtime_amount||0);raw.allowance=Number(raw.allowance||0);raw.deduction=Number(raw.deduction||0);raw.net_salary=raw.base_salary+raw.overtime_amount+raw.allowance-raw.deduction}if(activeForm==='product'){
+  if(activeForm==='employee'){if(!raw.employee_code)raw.employee_code='EMP-'+String(data.employees.length+1).padStart(3,'0');raw.salary_type=raw.salary_type||'Harian';}if(activeForm==='payroll'){raw.base_salary=Number(raw.base_salary||0);raw.overtime_hours=Number(raw.overtime_hours||0);raw.overtime_amount=Number(raw.overtime_amount||0);raw.allowance=Number(raw.allowance||0);raw.deduction=Number(raw.deduction||0);raw.net_salary=raw.base_salary+raw.overtime_amount+raw.allowance-raw.deduction}if(activeForm==='product'){
     raw.cost_price=Number(raw.cost_price||0);raw.selling_price=Number(raw.selling_price||0);raw.stock=Number(raw.stock||0);raw.min_stock=Number(raw.min_stock||0);raw.active=raw.active!=='Tidak';
   }
   if(activeForm==='customer'&&!raw.customer_code)raw.customer_code='CUS-'+String(data.customers.length+1).padStart(3,'0');
@@ -362,8 +364,16 @@ el('dataForm').onsubmit=async e=>{
   if(activeForm==='target'){raw.target_value=Number(raw.target_value||0);raw.current_value=Number(raw.current_value||0)}
   if(activeForm==='attendance'){raw.attendance_date=today();if(['Hadir','Terlambat'].includes(raw.status)&&!editingId)raw.check_in=new Date().toISOString()}
   if(activeForm==='production'){
-    raw.qty_planned=Number(raw.qty_planned||0);raw.qty_completed=Number(raw.qty_completed||0);
+    raw.qty_planned=Number(raw.qty_planned||0);raw.qty_completed=Number(raw.qty_completed||0);raw.purchase_price=Number(raw.purchase_price||0);raw.purchase_total=raw.qty_planned*raw.purchase_price;
     const p=data.products.find(x=>String(x.id)===String(raw.product_id));if(p){raw.product_name=p.name}
+    const a=data.artisans.find(x=>String(x.id)===String(raw.artisan_id));
+    if(a&&raw.product_id&&raw.purchase_price>=0){
+      await db.from('artisan_product_rates').upsert({artisan_id:a.id,product_id:raw.product_id,purchase_price:raw.purchase_price,unit:'pcs',active:true,updated_at:new Date().toISOString()},{onConflict:'artisan_id,product_id'});
+    }
+  }
+  if(activeForm==='attendance'){
+    const emp=data.employees.find(x=>String(x.id)===String(raw.employee_id));
+    if(emp){raw.employee_name=emp.name;raw.division=emp.division||emp.position||'';}
   }
   if(activeForm==='export'){
     raw.cbm=Number(raw.cbm||0);raw.carton_count=Number(raw.carton_count||0);raw.piece_count=Number(raw.piece_count||0);raw.fob_total=Number(raw.fob_total||0);
