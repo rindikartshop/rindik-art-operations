@@ -49,7 +49,7 @@ const forms={
     ['joined_date','Bergabung','date'],['daily_capacity','Kapasitas / hari (pcs)','number'],['notes','Catatan','text']
   ]},
   attendance:{table:'attendance',title:'Absensi Karyawan Toko',eyebrow:'KARYAWAN · GAJI HARIAN',fields:[
-    ['employee_id','Karyawan','employee',1],['employee_name','Nama karyawan','text'],['division','Divisi','text'],
+    ['employee_id','Karyawan toko','employee',1],['division','Divisi','text'],
     ['status','Status','select',1,['Hadir','Terlambat','Izin','Sakit']],['notes','Catatan','text']
   ]},
   invoice:{table:'invoices',title:'Invoice',eyebrow:'TAGIHAN',fields:[
