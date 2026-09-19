@@ -49,8 +49,7 @@ const forms={
     ['joined_date','Bergabung','date'],['daily_capacity','Kapasitas / hari (pcs)','number'],['notes','Catatan','text']
   ]},
   attendance:{table:'attendance',title:'Absensi Karyawan Toko',eyebrow:'KARYAWAN · GAJI HARIAN',fields:[
-    ['employee_id','Karyawan toko','employee',1],['division','Divisi','text'],
-    ['status','Status','select',1,['Hadir','Terlambat','Izin','Sakit']],['notes','Catatan','text']
+    ['employee_id','Karyawan toko','employee',1],['attendance_date','Tanggal','date',1],['check_in','Jam masuk','datetime-local'],['check_out','Jam pulang','datetime-local'],['status','Status','select',1,['Hadir','Terlambat','Izin','Sakit']],['notes','Catatan','text']
   ]},
   invoice:{table:'invoices',title:'Invoice',eyebrow:'TAGIHAN',fields:[
     ['invoice_no','Nomor invoice','text',1],['order_id','Pesanan / PO','order'],
@@ -143,6 +142,8 @@ function fieldHtml(field,row){
     else value='';
   }
   const req=required?' required':'';
+  if(name==='active'&&type==='select'&&Array.isArray(choices)) value=value===true?'Ya':value===false?'Tidak':value;
+  if(type==='datetime-local'&&value){const d=new Date(value);if(!Number.isNaN(d.getTime()))value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
   if(['customer','product','order','invoice','product_id','artisan_id'].includes(type)){
     let html=relationOptions(type,value,name,!!required);
     if(activeForm==='order'&&(type==='customer'||type==='product')){
@@ -428,7 +429,7 @@ el('dataForm').onsubmit=async e=>{
   if(activeForm==='payment'){raw.amount=Number(raw.amount||0);raw.payment_date=raw.payment_date||today()}
   if(activeForm==='expense')raw.amount=Number(raw.amount||0);
   if(activeForm==='target'){raw.target_value=Number(raw.target_value||0);raw.current_value=Number(raw.current_value||0)}
-  if(activeForm==='attendance'){raw.attendance_date=today();if(['Hadir','Terlambat'].includes(raw.status)&&!editingId)raw.check_in=new Date().toISOString()}
+  if(activeForm==='attendance'){raw.attendance_date=raw.attendance_date||today();if(raw.check_in)raw.check_in=new Date(raw.check_in).toISOString();if(raw.check_out)raw.check_out=new Date(raw.check_out).toISOString();if(['Hadir','Terlambat'].includes(raw.status)&&!editingId&&!raw.check_in)raw.check_in=new Date().toISOString()}
   if(activeForm==='production'){
     raw.qty_planned=Number(raw.qty_planned||0);raw.qty_completed=Number(raw.qty_completed||0);raw.purchase_price=Number(raw.purchase_price||0);raw.purchase_total=raw.qty_planned*raw.purchase_price;
     const p=data.products.find(x=>String(x.id)===String(raw.product_id));if(p){raw.product_name=p.name}
