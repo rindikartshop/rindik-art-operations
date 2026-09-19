@@ -110,16 +110,16 @@ function relationOptions(type,value,name,required=false){
     items=data.customers.map(x=>({id:x.id,label:x.name+(x.company_name?' · '+x.company_name:''),code:x.customer_code||''}));
   }else if(type==='artisan_id'){
     placeholder='🔎 Cari nama pengrajin / kode';
-    items=data.artisans.filter(x=>x.status!=='Nonaktif').map(x=>({id:x.id,label:x.name,code:x.artisan_code||''}));
+    items=data.artisans.filter(x=>x.status!=='Nonaktif'||String(x.id)===String(value)).map(x=>({id:x.id,label:x.name,code:x.artisan_code||''}));
   }else if(type==='employee'){
     placeholder='🔎 Cari nama karyawan / jabatan';
-    items=data.employees.filter(x=>x.status!=='Nonaktif').map(x=>({id:x.id,label:x.name,code:x.employee_code||''}));
+    items=data.employees.filter(x=>x.status!=='Nonaktif'||String(x.id)===String(value)).map(x=>({id:x.id,label:x.name,code:x.employee_code||''}));
   }else if(type==='product_id'){
     placeholder='🔎 Cari SKU / nama produk';
-    items=data.products.filter(x=>x.active!==false).map(x=>({id:x.id,label:x.sku+' · '+x.name,code:x.sku||''}));
+    items=data.products.filter(x=>x.active!==false||String(x.id)===String(value)).map(x=>({id:x.id,label:x.sku+' · '+x.name,code:x.sku||''}));
   }else if(type==='product'){
     placeholder='🔎 Cari SKU / nama produk';
-    items=data.products.filter(x=>x.active!==false).map(x=>({id:x.sku,label:x.sku+' · '+x.name,code:x.sku||''}));
+    items=data.products.filter(x=>x.active!==false||String(x.sku)===String(value)).map(x=>({id:x.sku,label:x.sku+' · '+x.name,code:x.sku||''}));
   }else if(type==='order'){
     placeholder='🔎 Cari nomor PO / buyer';
     items=data.orders.map(x=>({id:x.id,label:(x.order_code||x.id)+' · '+(x.customer_name||''),code:x.order_code||''}));
@@ -203,6 +203,7 @@ async function quickAddOrderMaster(type){
   }
 }
 
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!el('modal').hidden){el('cancelModal')?.click()}});
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-quick-add]');
   if(!b)return;
@@ -213,7 +214,7 @@ function openForm(type,row=null){
   const f=forms[type];if(!f)return;
   activeForm=type;editingId=row?.id||null;
   el('formEyebrow').textContent=f.eyebrow;
-  el('formTitle').textContent=(editingId?'Edit ':'Tambah ')+f.title;
+  el('formTitle').textContent=editingId?'Edit Data · '+f.title:'Tambah '+f.title;
   msg('formMessage','');
   const fields=el('formFields');
   if(!fields){console.error('formFields tidak ditemukan');return}
@@ -253,6 +254,11 @@ function openForm(type,row=null){
       }else if(!editingId){base.value=Number(emp.base_salary||0);}
     };
     empSel?.addEventListener('change',calcDaily);month?.addEventListener('change',calcDaily);calcDaily();
+  }
+  if(type==='invoice'){
+    const sub=fields.querySelector('[name="subtotal"]'),ship=fields.querySelector('[name="shipping_cost"]'),disc=fields.querySelector('[name="discount"]'),tot=fields.querySelector('[name="total"]');
+    const calc=()=>{if(tot)tot.value=Math.max(0,Number(sub?.value||0)+Number(ship?.value||0)-Number(disc?.value||0));};
+    sub?.addEventListener('input',calc);ship?.addEventListener('input',calc);disc?.addEventListener('input',calc);calc();
   }
   if(type==='order'){
     const ps=fields.querySelector('[name="sku"]'),q=fields.querySelector('[name="quantity"]'),u=fields.querySelector('[name="unit_price"]'),tot=fields.querySelector('[name="total_amount"]');
