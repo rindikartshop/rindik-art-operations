@@ -454,3 +454,5 @@ async function openInvoicePreview(id){
 function printInvoice(id){openInvoicePreview(id)}
 el('closeInvoicePreview')?.addEventListener('click',()=>el('invoicePreviewModal').hidden=true);
 el('closeInvoicePreview2')?.addEventListener('click',()=>el('invoicePreviewModal').hidden=true);
+
+function calcFob(){const ids=['fobProduct','fobPacking','fobTrucking','fobForwarder','fobBank','fobCoo','fobPhyto','fobDuty','fobOther'];const n=id=>Number(el(id)?.value||0);const qty=n('fobQty')||1;const product=n('fobProduct')*qty;const costs=ids.slice(1).reduce((s,id)=>s+n(id),0);const total=product+costs;el('fobProductTotal')&&(el('fobProductTotal').textContent=money(product));el('fobCostTotal')&&(el('fobCostTotal').textContent=money(costs));el('fobGrandTotal')&&(el('fobGrandTotal').textContent=money(total));el('fobPerPiece')&&(el('fobPerPiece').textContent=money(total/qty))}document.querySelectorAll('#export input').forEach(i=>i.addEventListener('input',calcFob));document.querySelectorAll('.fob-calculator input').forEach(i=>i.addEventListener('input',calcFob));
