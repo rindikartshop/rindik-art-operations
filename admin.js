@@ -102,17 +102,38 @@ function addActions(){
   });
 }
 
-function relationOptions(type,value){
-  if(type==='customer') return '<select name="__x"><option value="">Pilih customer</option>'+data.customers.map(x=>'<option value="'+esc(x.id)+'" '+(String(value)===String(x.id)?'selected':'')+'>'+esc(x.name)+(x.company_name?' · '+esc(x.company_name):'')+'</option>').join('')+'</select>';
-  if(type==='product') return '<select name="__x"><option value="">Pilih produk</option>'+data.products.filter(x=>x.active!==false).map(x=>'<option value="'+esc(x.sku)+'" '+(String(value)===String(x.sku)?'selected':'')+'>'+esc(x.sku)+' · '+esc(x.name)+' · '+money(x.selling_price)+'</option>').join('')+'</select>';
-  if(type==='order') return '<select name="__x"><option value="">Pilih PO</option>'+data.orders.map(x=>'<option value="'+esc(x.id)+'" '+(String(value)===String(x.id)?'selected':'')+'>'+esc(x.order_code||x.id)+' · '+esc(x.customer_name||'')+'</option>').join('')+'</select>';
-  if(type==='employee') return '<select name="__x"><option value="">Pilih karyawan</option>'+data.employees.filter(x=>x.status!=='Nonaktif').map(x=>'<option value="'+esc(x.id)+'" '+(String(value)===String(x.id)?'selected':'')+'>'+esc(x.name)+' · '+esc(x.position||'')+'</option>').join('')+'</select>';
-  if(type==='invoice') return '<select name="__x"><option value="">Pilih invoice</option>'+data.invoices.map(x=>'<option value="'+esc(x.id)+'" '+(String(value)===String(x.id)?'selected':'')+'>'+esc(x.invoice_no)+' · '+money(x.total)+'</option>').join('')+'</select>';
-  if(type==='product_id') return '<select name="__x"><option value="">Pilih produk</option>'+data.products.map(x=>'<option value="'+esc(x.id)+'" '+(String(value)===String(x.id)?'selected':'')+'>'+esc(x.sku)+' · '+esc(x.name)+'</option>').join('')+'</select>';
-  if(type==='artisan_id') return '<select name="__x"><option value="">Pilih pengrajin</option>'+data.artisans.filter(x=>x.status!=='Nonaktif').map(x=>'<option value="'+esc(x.id)+'" '+(String(value)===String(x.id)?'selected':'')+'>'+esc(x.name)+' · '+esc(x.artisan_code||'')+'</option>').join('')+'</select>';
-  return '';
+function relationOptions(type,value,name,required=false){
+  const req=required?' required':'';
+  const key='rel-'+String(name||type).replace(/[^a-zA-Z0-9_-]/g,'');
+  let items=[],placeholder='Cari...';
+  if(type==='customer'){
+    placeholder='🔎 Cari nama buyer / perusahaan / kode';
+    items=data.customers.map(x=>({id:x.id,label:x.name+(x.company_name?' · '+x.company_name:''),code:x.customer_code||''}));
+  }else if(type==='artisan_id'){
+    placeholder='🔎 Cari nama pengrajin / kode';
+    items=data.artisans.filter(x=>x.status!=='Nonaktif').map(x=>({id:x.id,label:x.name,code:x.artisan_code||''}));
+  }else if(type==='employee'){
+    placeholder='🔎 Cari nama karyawan / jabatan';
+    items=data.employees.filter(x=>x.status!=='Nonaktif').map(x=>({id:x.id,label:x.name,code:x.employee_code||''}));
+  }else if(type==='product_id'){
+    placeholder='🔎 Cari SKU / nama produk';
+    items=data.products.filter(x=>x.active!==false).map(x=>({id:x.id,label:x.sku+' · '+x.name,code:x.sku||''}));
+  }else if(type==='product'){
+    placeholder='🔎 Cari SKU / nama produk';
+    items=data.products.filter(x=>x.active!==false).map(x=>({id:x.sku,label:x.sku+' · '+x.name,code:x.sku||''}));
+  }else if(type==='order'){
+    placeholder='🔎 Cari nomor PO / buyer';
+    items=data.orders.map(x=>({id:x.id,label:(x.order_code||x.id)+' · '+(x.customer_name||''),code:x.order_code||''}));
+  }else if(type==='invoice'){
+    placeholder='🔎 Cari nomor invoice';
+    items=data.invoices.map(x=>({id:x.id,label:x.invoice_no+' · '+money(x.total),code:x.invoice_no||''}));
+  }
+  const selected=items.find(x=>String(x.id)===String(value));
+  const selectedText=selected?(selected.label+(selected.code&&selected.label.indexOf(selected.code)<0?' · '+selected.code:'')):'';
+  const listId=key+'-list';
+  const opts=items.map(x=>'<option data-id="'+esc(x.id)+'" value="'+esc(x.label+(x.code&&x.label.indexOf(x.code)<0?' · '+x.code:''))+'"></option>').join('');
+  return '<div class="relation-search-wrap"><input class="relation-search" type="text" list="'+listId+'" placeholder="'+placeholder+'" value="'+esc(selectedText)+'" autocomplete="off" data-relation-type="'+esc(type)+'" data-relation-name="'+esc(name||'')+'"'+(required?' required':'')+'><datalist id="'+listId+'">'+opts+'</datalist><input type="hidden" name="'+esc(name||'')+'" value="'+esc(value||'')+'"'+req+'></div>';
 }
-
 function fieldHtml(field,row){
   const [name,label,type,required,choices]=field;
   let value=row?.[name];
@@ -123,12 +144,12 @@ function fieldHtml(field,row){
   }
   const req=required?' required':'';
   if(['customer','product','order','invoice','product_id','artisan_id'].includes(type)){
-    let html=relationOptions(type,value).replace('name="__x"','name="'+name+'"'+req);
+    let html=relationOptions(type,value,name,!!required);
     if(activeForm==='order'&&(type==='customer'||type==='product')){
       const addLabel=type==='customer'?'＋ Customer baru':'＋ Produk baru';
       html='<div class="relation-add-wrap">'+html+'<button type="button" class="secondary relation-add-btn" data-quick-add="'+type+'">'+addLabel+'</button></div>';
-      if(type==='customer') html+='<small class="field-help">Jika buyer belum ada, klik “Customer baru”. Data akan otomatis masuk ke database Customer / Buyer.</small>';
-      if(type==='product') html+='<small class="field-help">Jika produk belum ada, klik “Produk baru”. Data akan otomatis masuk ke database Produk & Stok.</small>';
+      if(type==='customer') html+='<small class="field-help">Ketik nama buyer untuk mencari cepat. Jika belum ada, klik “Customer baru”.</small>';
+      if(type==='product') html+='<small class="field-help">Ketik SKU atau nama produk untuk mencari cepat.</small>';
     }
     return '<label>'+label+html+'</label>';
   }
@@ -363,6 +384,23 @@ async function syncInvoicePayments(invoiceId){
   if(e)console.error(e);
 }
 
+document.addEventListener('input',e=>{
+  const input=e.target.closest('.relation-search'); if(!input)return;
+  const list=el(input.getAttribute('list')); const hidden=input.parentElement.querySelector('input[type="hidden"]');
+  if(!list||!hidden)return;
+  const val=input.value.trim().toLowerCase();
+  const opt=[...list.options].find(o=>String(o.value).trim().toLowerCase()===val);
+  hidden.value=opt?.dataset.id||'';
+  if(!opt&&val==='')hidden.value='';
+});
+document.addEventListener('change',e=>{
+  const input=e.target.closest('.relation-search'); if(!input)return;
+  const list=el(input.getAttribute('list')); const hidden=input.parentElement.querySelector('input[type="hidden"]');
+  if(!list||!hidden)return;
+  const val=input.value.trim().toLowerCase();
+  const opt=[...list.options].find(o=>String(o.value).trim().toLowerCase()===val);
+  if(opt)hidden.value=opt.dataset.id;
+});
 el('dataForm').onsubmit=async e=>{
   e.preventDefault();
   msg('formMessage','Menyimpan...');
