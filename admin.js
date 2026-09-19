@@ -27,7 +27,7 @@ const forms={
   product:{table:'products',title:'Produk & Stok',eyebrow:'INVENTORY',fields:[
     ['sku','SKU','text',1],['name','Nama produk','text',1],['category','Kategori','text'],
     ['material','Material','text'],['unit','Satuan','text'],['cost_price','Harga modal','number'],
-    ['selling_price','Harga jual','number'],['stock','Stok awal','number'],['min_stock','Minimum stok','number'],
+    ['selling_price','Harga jual','number'],['image_url','URL foto produk','url'],['stock','Stok awal','number'],['min_stock','Minimum stok','number'],
     ['active','Status produk','select',0,['Ya','Tidak']],['notes','Catatan','text']
   ]},
   order:{table:'orders',title:'Pesanan / PO',eyebrow:'PENJUALAN',fields:[
@@ -265,7 +265,7 @@ async function load(){
   const st=rs[es.findIndex(x=>x[0]==='settings')].data;
   data.companySettings=st||{company_name:'Rindik Art',admin_name:''};
   data.agenda=rs[es.findIndex(x=>x[0]==='agenda')].data||[];
-  if(st){el('companyName').value=st.company_name||'Rindik Art';el('adminName').value=st.admin_name||'';el('headerName').textContent=st.company_name||'Rindik Art'}
+  if(st){el('companyName').value=st.company_name||'Rindik Art';el('adminName').value=st.admin_name||'';el('companyAddress').value=st.company_address||'';el('companyPhone').value=st.company_phone||'';el('companyEmail').value=st.company_email||'';el('companyWebsite').value=st.company_website||'';el('instagram').value=st.instagram||'';el('bankName').value=st.bank_name||'';el('bankAccount').value=st.bank_account||'';el('bankHolder').value=st.bank_holder||'';el('tagline').value=st.tagline||'';el('headerName').textContent=st.company_name||'Rindik Art'}
   render();msg('settingsMessage','');return true;
 }
 
@@ -416,7 +416,7 @@ function oldPrintInvoice(id){
 
 el('settingsForm').onsubmit=async e=>{
   e.preventDefault();msg('settingsMessage','Menyimpan...');
-  const {error}=await db.from('app_settings').upsert({id:'company',company_name:el('companyName').value.trim(),admin_name:el('adminName').value.trim(),updated_at:new Date().toISOString()});
+  const {error}=await db.from('app_settings').upsert({id:'company',company_name:el('companyName').value.trim(),admin_name:el('adminName').value.trim(),company_address:el('companyAddress').value.trim(),company_phone:el('companyPhone').value.trim(),company_email:el('companyEmail').value.trim(),company_website:el('companyWebsite').value.trim(),instagram:el('instagram').value.trim(),bank_name:el('bankName').value.trim(),bank_account:el('bankAccount').value.trim(),bank_holder:el('bankHolder').value.trim(),tagline:el('tagline').value.trim(),updated_at:new Date().toISOString()});
   msg('settingsMessage',error?'Gagal: '+error.message:'✓ Pengaturan tersimpan.');if(!error)await load();
 };
 el('passwordToggle').onclick=()=>{const p=el('password'),show=p.type==='password';p.type=show?'text':'password';el('passwordToggle').textContent=show?'Sembunyikan':'Tampilkan'};
