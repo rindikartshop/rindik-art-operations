@@ -7,3 +7,10 @@
 #formFields input[readonly]{background:#eef2ee!important;color:#31443a!important;-webkit-text-fill-color:#31443a!important}
 .form input:focus,.form select:focus,#formFields input:focus,#formFields select:focus,.modal-card input:focus,.modal-card select:focus{outline:2px solid #c8ae5b!important;outline-offset:1px}
 @media(max-width:700px){.auth-card label,.form label,.modal-card label,#formFields label{font-size:13px!important}.auth-card input,.form input,.form select,#formFields input,#formFields select,.modal-card input,.modal-card select{min-height:46px!important;font-size:15px!important;padding:12px!important}.modal-card{padding:22px 18px!important}header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+
+/* Quick-add master data from PO */
+.relation-add-wrap{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.relation-add-wrap select{flex:1;min-width:180px}
+.relation-add-btn{white-space:nowrap;min-height:42px}
+.field-help{display:block;margin-top:5px;color:#b9c8bf;font-size:11px;line-height:1.4}
+@media(max-width:700px){.relation-add-wrap{align-items:stretch}.relation-add-wrap select{width:100%;min-width:100%}.relation-add-btn{width:100%}.field-help{font-size:11px}}
