@@ -87,9 +87,7 @@ function hook(){
   if(typeof originalOpen==='function'){
     window.openForm=function(type,row){originalOpen(type,row);if(type==='customer')setTimeout(toggleCustomerFields,0)};
   }
-  const obs=new MutationObserver(()=>{renderBuyerStats();renderBuyerTable()});
-  const target=document.getElementById('customers');if(target)obs.observe(target,{subtree:true,childList:true});
-  setInterval(()=>{renderBuyerStats();renderBuyerTable()},1500);
+  window.renderBuyerEnhancements=()=>{renderBuyerStats();renderBuyerTable()};
   renderBuyerStats();renderBuyerTable();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hook);else hook();
