@@ -1,6 +1,6 @@
 /* RINDIK ART - readability and mobile performance fixes */
 .modal[hidden]{display:none!important}
-.auth-card label,.form label,.modal-card label,#formFields label{color:#e8eee9!important}
+.auth-card label,.form label,.modal-card label,#formFields label{color:#526159!important}
 .auth-card input,.form input,.form select,#formFields input,#formFields select,.modal-card input,.modal-card select{color:#17201b!important;-webkit-text-fill-color:#17201b!important;background:#fff!important;border:1px solid #cbd6ce!important;font-weight:600}
 .auth-card input::placeholder,.form input::placeholder,#formFields input::placeholder,.modal-card input::placeholder{color:#66746b!important;-webkit-text-fill-color:#66746b!important;opacity:1!important}
 #formFields select option,.form select option,.modal-card select option{color:#17201b!important;background:#fff!important}
@@ -12,5 +12,5 @@
 .relation-add-wrap{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .relation-add-wrap select{flex:1;min-width:180px}
 .relation-add-btn{white-space:nowrap;min-height:42px}
-.field-help{display:block;margin-top:5px;color:#b9c8bf;font-size:11px;line-height:1.4}
+.field-help{display:block;margin-top:5px;color:#718078;font-size:11px;line-height:1.4}
 @media(max-width:700px){.relation-add-wrap{align-items:stretch}.relation-add-wrap select{width:100%;min-width:100%}.relation-add-btn{width:100%}.field-help{font-size:11px}}
