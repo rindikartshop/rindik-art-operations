@@ -333,13 +333,35 @@ let notifiedKeys=new Set();function maybeBrowserNotify(upcoming,shipmentAlerts){
 document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openForm(b.dataset.open));
 
 function qrPayload(artisan){return 'RINDIK-ABSEN|'+artisan.id+'|'+(artisan.artisan_code||'')+'|'+encodeURIComponent(artisan.name||'')}
-function showQrForArtisan(id){
+let qrLibPromise=null,scannerLibPromise=null;
+function loadExternalScript(src){
+  return new Promise((resolve,reject)=>{
+    const existing=document.querySelector('script[data-rindik-lib="'+src+'"]');
+    if(existing){existing.addEventListener('load',()=>resolve(),{once:true});existing.addEventListener('error',reject,{once:true});return}
+    const s=document.createElement('script');s.src=src;s.async=true;s.dataset.rindikLib=src;
+    s.onload=()=>resolve();s.onerror=reject;document.head.appendChild(s);
+  });
+}
+async function ensureQrLib(){
+  if(window.QRCode)return window.QRCode;
+  if(!qrLibPromise)qrLibPromise=loadExternalScript('https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js');
+  await qrLibPromise;return window.QRCode;
+}
+async function ensureScannerLib(){
+  if(window.Html5Qrcode)return window.Html5Qrcode;
+  if(!scannerLibPromise)scannerLibPromise=loadExternalScript('https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js');
+  await scannerLibPromise;return window.Html5Qrcode;
+}
+async function showQrForArtisan(id){
   const a=data.artisans.find(x=>String(x.id)===String(id));if(!a)return;
   const box=el('qrCode');box.innerHTML='';
   el('qrTitle').textContent='QR Absensi — '+(a.name||'Pengrajin');
   el('qrSub').textContent=(a.artisan_code||'')+' · Scan untuk check-in / check-out';
-  if(window.QRCode)new QRCode(box,{text:qrPayload(a),width:220,height:220,colorDark:'#20362d',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
-  el('qrModal').hidden=false;
+  try{
+    await ensureQrLib();
+    new QRCode(box,{text:qrPayload(a),width:220,height:220,colorDark:'#20362d',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+    el('qrModal').hidden=false;
+  }catch(e){msg('scanMessage','QR belum dapat dimuat. Periksa koneksi internet lalu coba lagi.')}
 }
 let qrScanner=null,scannerRunning=false;
 async function stopQrScanner(){
@@ -363,7 +385,7 @@ async function handleAttendanceQr(text){
   }
 }
 async function startQrScanner(){
-  if(typeof Html5Qrcode==='undefined'){msg('scanMessage','Scanner belum termuat. Pastikan internet aktif, lalu coba lagi.');return}
+  try{await ensureScannerLib()}catch(e){msg('scanMessage','Scanner belum dapat dimuat. Periksa koneksi internet lalu coba lagi.');return}
   await stopQrScanner();
   qrScanner=new Html5Qrcode('qr-reader');scannerRunning=true;
   try{
@@ -443,7 +465,6 @@ db.auth.onAuthStateChange((event,session)=>{
 });
 el('logout').onclick=async()=>{await db.auth.signOut();location.href='/'};
 window.addEventListener('load',start);
-if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=20260919-7').catch(console.warn));
 async function openInvoicePreview(id){
  const x=data.invoices.find(v=>String(v.id)===String(id));if(!x)return;
  const c=data.customers.find(v=>String(v.id)===String(x.customer_id)),o=data.orders.find(v=>String(v.id)===String(x.order_id)),p=data.products.find(v=>String(v.sku)===String(o?.sku)),company=data.companySettings||{},paid=Number(x.paid_amount||0),total=Number(x.total||0);
