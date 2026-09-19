@@ -194,3 +194,126 @@ td{color:#33463d;border-color:#edf1ed}
   .cards article{min-height:112px}
   .app aside{box-shadow:10px 0 30px rgba(32,54,45,.14)}
 }
+
+
+/* RINDIK ART — CREAM / NATURAL RATTAN THEME
+   Logo assets are intentionally untouched. */
+:root{
+  --ink:#3b3025;
+  --green:#426b50;
+  --green-2:#587b60;
+  --soft:#f6efe2;
+  --line:#e6dccb;
+  --gold:#a97832;
+  --muted:#756b5f;
+  --bg:#f7f0e4;
+  --panel:#fffdf8;
+}
+html{background:#f7f0e4}
+body{
+  background:
+    radial-gradient(circle at 8% 8%,rgba(186,143,77,.10),transparent 22%),
+    radial-gradient(circle at 92% 18%,rgba(92,122,82,.08),transparent 24%),
+    linear-gradient(135deg,#faf5ec 0%,#f4ead9 52%,#faf6ee 100%);
+  color:var(--ink);
+}
+.app{background:transparent}
+.app aside{
+  background:rgba(255,250,241,.96);
+  border-right:1px solid #e5d9c5;
+  box-shadow:8px 0 28px rgba(83,65,42,.06);
+}
+.workspace{color:#9a8c79}
+.workspace b{color:#3b3025}
+nav a{color:#675e53}
+nav a:hover{background:#f2e8d7;color:#426b50}
+nav a.active{
+  background:#eadfc9;
+  color:#3d6249;
+  box-shadow:inset 3px 0 0 #a97832;
+}
+header{
+  background:rgba(255,252,246,.94);
+  border-bottom:1px solid #e6dccb;
+  box-shadow:0 3px 18px rgba(83,65,42,.045);
+}
+header b{color:#3b3025}
+header small{color:#827768}
+.view{padding:32px 40px}
+.view#dashboard>.heading{
+  background:
+    linear-gradient(105deg,rgba(250,244,231,.98),rgba(239,229,210,.94)),
+    radial-gradient(circle at 88% 20%,rgba(181,142,79,.18),transparent 34%);
+  border-color:#e0d0b5;
+  box-shadow:0 12px 30px rgba(83,65,42,.08);
+}
+.view#dashboard>.heading h1{color:#3b3025}
+.view#dashboard>.heading p{color:#716658}
+.view#dashboard>.heading:after{color:#98702f}
+.cards article,.panel,.summary-strip article{
+  background:rgba(255,253,248,.97);
+  border-color:#e5dbc9;
+  box-shadow:0 8px 24px rgba(83,65,42,.055);
+}
+.cards article:hover{box-shadow:0 12px 28px rgba(83,65,42,.10)}
+.cards span{background:#edf2e8;color:#426b50}
+.cards p,.panel p,.summary-strip span{color:#786e61}
+.cards h2,.summary-strip b,.panel h3{color:#3b3025}
+.panel-head a{color:#426b50}
+th{color:#968a7b}
+td{color:#4a4035;border-color:#eee7dc}
+.tag{background:#edf3e9;color:#3f7351}
+.primary{background:#426b50;border-color:#426b50}
+.primary:hover{background:#385d45}
+.secondary{
+  background:#fffdf8;
+  border-color:#dcd0bd;
+  color:#42634d;
+}
+.secondary:hover{background:#f7f0e4}
+.row-btn{background:#fffdf8;border-color:#dcd3c4;color:#42634d}
+.row-btn:hover{background:#f2eadc}
+.row-btn.danger{background:#fff8f5;border-color:#ead5cd;color:#a34b42}
+.modal{background:rgba(62,48,34,.30)}
+.modal-card,.auth-card{
+  background:#fffdf8;
+  border-color:#e1d7c7;
+  color:#3b3025;
+  box-shadow:0 22px 55px rgba(83,65,42,.16);
+}
+.modal-card input,.modal-card select,.auth input,.form input,.form select{
+  background:#fffefa;
+  color:#3b3025;
+  border-color:#dcd1bf;
+}
+.auth{
+  background:
+    radial-gradient(circle at 50% 5%,rgba(222,232,213,.75),transparent 42%),
+    linear-gradient(135deg,#f5efe3,#fffaf1);
+}
+.auth p,.heading p{color:#786e61}
+.auth label,.form label,.modal-card label{color:#62584c}
+.notification-panel .notice,.order-alert{
+  background:#fffdf8;
+  border-color:#e5dccd;
+  color:#4a4035;
+  box-shadow:0 5px 15px rgba(83,65,42,.04);
+}
+.notice span,.order-alert small{color:#7d7367}
+.calendar-grid .cal-day{
+  background:#fffdf8;
+  border-color:#e4dacb;
+  color:#4a4035;
+}
+.calendar-grid .cal-day span{background:#edf3e9;color:#3f7351}
+.cal-day.today{box-shadow:inset 0 0 0 2px #b98938}
+.calendar-head h3{color:#3b3025}
+.invoice-preview-shell{background:#f2eadc!important;border-color:#ddd0bc!important}
+.invoice-toolbar,.invoice-actions{
+  background:#fffdf8!important;
+  border-color:#e5dccd!important;
+  color:#3b3025!important;
+}
+@media(max-width:700px){
+  .app aside{box-shadow:10px 0 30px rgba(83,65,42,.16)}
+}
