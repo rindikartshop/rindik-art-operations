@@ -123,12 +123,68 @@ function fieldHtml(field,row){
   const req=required?' required':'';
   if(['customer','product','order','invoice','product_id','artisan_id'].includes(type)){
     let html=relationOptions(type,value).replace('name="__x"','name="'+name+'"'+req);
+    if(activeForm==='order'&&(type==='customer'||type==='product')){
+      const addLabel=type==='customer'?'＋ Customer baru':'＋ Produk baru';
+      html='<div class="relation-add-wrap">'+html+'<button type="button" class="secondary relation-add-btn" data-quick-add="'+type+'">'+addLabel+'</button></div>';
+      if(type==='customer') html+='<small class="field-help">Jika buyer belum ada, klik “Customer baru”. Data akan otomatis masuk ke database Customer / Buyer.</small>';
+      if(type==='product') html+='<small class="field-help">Jika produk belum ada, klik “Produk baru”. Data akan otomatis masuk ke database Produk & Stok.</small>';
+    }
     return '<label>'+label+html+'</label>';
   }
   if(type==='select') return '<label>'+label+'<select name="'+name+'"'+req+'>'+choices.map(o=>'<option value="'+esc(o)+'" '+(String(value)===String(o)?'selected':'')+'>'+esc(o)+'</option>').join('')+'</select></label>';
   const readonly=name==='total_amount'?' readonly':'';
   return '<label>'+label+'<input name="'+name+'" type="'+type+'" value="'+esc(value)+'"'+req+readonly+'></label>';
 }
+
+function orderDraftFromForm(){
+  const form=el('dataForm');if(!form)return {};
+  const raw=Object.fromEntries(new FormData(form));
+  Object.keys(raw).forEach(k=>{if(raw[k]==='')delete raw[k]});
+  return raw;
+}
+
+async function quickAddOrderMaster(type){
+  const draft=orderDraftFromForm();
+  if(type==='customer'){
+    const name=window.prompt('Nama customer / buyer baru:','');if(name===null||!name.trim())return;
+    const company=window.prompt('Nama perusahaan (boleh kosong):','')||'';
+    const country=window.prompt('Negara / lokasi:','Indonesia')||'Indonesia';
+    const phone=window.prompt('WhatsApp / Telepon (boleh kosong):','')||'';
+    const code='CUS-'+String(data.customers.length+1).padStart(3,'0');
+    msg('formMessage','Menyimpan customer baru...');
+    const {data:created,error}=await db.from('customers').insert({customer_code:code,name:name.trim(),company_name:company.trim(),country:country.trim(),phone:phone.trim(),customer_type:country.trim().toLowerCase()==='indonesia'?'Wholesale':'Export',status:'Aktif'}).select().single();
+    if(error){msg('formMessage','Gagal menyimpan customer: '+error.message);return}
+    await load();
+    draft.customer_id=created.id;
+    draft.customer_code=created.customer_code;
+    openForm('order',draft);
+    msg('formMessage','✓ Customer baru tersimpan dan sudah dipilih untuk PO.');
+    return;
+  }
+  if(type==='product'){
+    const sku=window.prompt('SKU produk baru:','');if(sku===null||!sku.trim())return;
+    const name=window.prompt('Nama produk baru:',sku.trim())||sku.trim();
+    const priceRaw=window.prompt('Harga jual / pcs (angka saja):','0');if(priceRaw===null)return;
+    const price=Number(priceRaw||0);
+    const stockRaw=window.prompt('Stok awal:','0');if(stockRaw===null)return;
+    const stock=Number(stockRaw||0);
+    const code=sku.trim();
+    msg('formMessage','Menyimpan produk baru...');
+    const {data:created,error}=await db.from('products').insert({sku:code,name:name.trim(),selling_price:price,cost_price:0,stock,min_stock:0,active:true}).select().single();
+    if(error){msg('formMessage','Gagal menyimpan produk: '+error.message);return}
+    await load();
+    draft.sku=created.sku;
+    draft.unit_price=created.selling_price||0;
+    openForm('order',draft);
+    msg('formMessage','✓ Produk baru tersimpan dan sudah dipilih untuk PO.');
+  }
+}
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-quick-add]');
+  if(!b)return;
+  quickAddOrderMaster(b.dataset.quickAdd);
+});
 
 function openForm(type,row=null){
   const f=forms[type];if(!f)return;
