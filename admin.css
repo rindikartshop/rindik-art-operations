@@ -26,3 +26,171 @@ header{height:72px;background:rgba(8,14,11,.92);border-bottom:1px solid #2b3930;
 .invoice-paper *{color-scheme:light}
 .inv-head,.inv-meta,.inv-items,.inv-totals,.inv-pay-sign,.inv-footer{opacity:1!important;filter:none!important}
 @media print{html,body{background:#fff!important;color:#27231d!important}.invoice-paper{background:#fff!important;color:#27231d!important;box-shadow:none!important}}
+
+
+/* RINDIK ART LIGHT PREMIUM UI — 2026-09-19 */
+:root{
+  --ink:#20362d;
+  --green:#2f6b50;
+  --green-2:#3f8063;
+  --soft:#f4f7f3;
+  --line:#e2e8e1;
+  --gold:#b98938;
+  --muted:#718078;
+  --bg:#f7f9f6;
+  --panel:#ffffff;
+}
+html{background:var(--bg)}
+body{
+  background:
+    radial-gradient(circle at 88% -10%,rgba(201,151,76,.10),transparent 30%),
+    linear-gradient(180deg,#fbfcfa 0%,#f5f8f4 100%);
+  color:var(--ink);
+}
+.app{background:transparent}
+.app aside{
+  background:rgba(255,255,255,.96);
+  border-right:1px solid #e3e9e3;
+  box-shadow:8px 0 28px rgba(32,54,45,.05);
+  padding:20px 14px;
+}
+.side-logo{width:118px;height:118px;margin:0 auto;object-fit:contain}
+.workspace{color:#9aa59e;margin:10px 10px 14px}
+.workspace b{color:#20362d;font-size:14px}
+nav{gap:4px}
+nav a{
+  color:#5e6d64;
+  border-radius:10px;
+  padding:11px 12px;
+  transition:all .16s ease;
+}
+nav a:hover{background:#f0f5f1;color:#2f6b50}
+nav a.active{
+  background:#e8f2eb;
+  color:#255a42;
+  box-shadow:inset 3px 0 0 var(--gold);
+}
+.logout{color:#68766e}
+header{
+  height:72px;
+  background:rgba(255,255,255,.94);
+  border-bottom:1px solid #e3e9e3;
+  padding:0 30px;
+  box-shadow:0 3px 18px rgba(32,54,45,.04);
+  backdrop-filter:blur(10px);
+}
+header b{color:#20362d}
+header small{color:#7a877f}
+header img{
+  width:40px;height:40px;border-radius:50%;
+  background:#f5edda;padding:6px;
+}
+.view{padding:32px 40px;max-width:1480px}
+.view#dashboard>.heading{
+  min-height:165px;
+  padding:28px 30px;
+  border:1px solid #e6dcc8;
+  border-radius:18px;
+  background:
+    linear-gradient(110deg,rgba(235,244,236,.98),rgba(255,248,232,.96)),
+    radial-gradient(circle at 90% 20%,#e7c98d,transparent 34%);
+  box-shadow:0 12px 30px rgba(76,91,76,.08);
+  position:relative;
+  overflow:hidden;
+}
+.view#dashboard>.heading:after{
+  content:'RINDIK ART  •  CRAFTED WITH LOVE & CARE';
+  position:absolute;right:30px;bottom:24px;
+  color:#a67a30;font:600 15px 'Playfair Display';
+  letter-spacing:.8px;
+}
+.view#dashboard>.heading h1{font-size:36px;color:#20362d}
+.view#dashboard>.heading p{color:#68766e}
+.view#dashboard>.heading .primary{
+  position:relative;z-index:1;
+  background:#2f6b50;border-color:#3f8063;
+}
+.cards{gap:14px}
+.cards article,.panel,.summary-strip article{
+  background:#fff;
+  border:1px solid #e3e9e3;
+  box-shadow:0 8px 24px rgba(32,54,45,.055);
+}
+.cards article{
+  min-height:130px;
+  transition:transform .16s ease,box-shadow .16s ease;
+}
+.cards article:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 28px rgba(32,54,45,.09);
+}
+.cards span{background:#e8f3eb;color:#2f6b50}
+.cards p,.panel p,.summary-strip span{color:#77847c}
+.cards h2,.summary-strip b{color:#20362d}
+.panel h3{color:#20362d}
+.panel-head a{color:#2f6b50}
+th{color:#8b968f}
+td{color:#33463d;border-color:#edf1ed}
+.tag{background:#e8f3eb;color:#347052}
+.summary-strip{gap:10px}
+.summary-strip article{padding:14px}
+.primary{
+  background:#2f6b50;
+  border:1px solid #2f6b50;
+  box-shadow:0 5px 12px rgba(47,107,80,.14);
+}
+.primary:hover{background:#285e46}
+.secondary{
+  background:#fff;
+  border-color:#d8e1da;
+  color:#315646;
+}
+.secondary:hover{background:#f3f7f4}
+.row-btn{background:#fff;border-color:#d8e1da;color:#315646}
+.row-btn:hover{background:#f0f6f2}
+.row-btn.danger{background:#fff8f7;border-color:#ead5d2;color:#a34b42}
+.modal{background:rgba(26,43,35,.35);backdrop-filter:blur(2px)}
+.modal-card,.auth-card{
+  background:#fff;
+  border-color:#e0e7e0;
+  color:#20362d;
+  box-shadow:0 22px 55px rgba(25,45,35,.16);
+}
+.modal-card input,.modal-card select,.auth input,.form input,.form select{
+  background:#fff;
+  color:#20362d;
+  border-color:#d7e1d9;
+}
+.auth{
+  background:
+    radial-gradient(circle at 50% 5%,rgba(214,231,216,.75),transparent 42%),
+    linear-gradient(135deg,#f5f9f5,#fffaf0);
+}
+.auth p,.heading p{color:#75827a}
+.auth label,.form label,.modal-card label{color:#526159}
+.notification-panel .notice,.order-alert{
+  background:#fff;
+  border-color:#e0e7e0;
+  color:#33463d;
+  box-shadow:0 5px 15px rgba(32,54,45,.04);
+}
+.notice span,.order-alert small{color:#78857d}
+.calendar-grid .cal-day{
+  background:#fff;
+  border-color:#e1e8e1;
+  color:#33463d;
+  box-shadow:0 3px 10px rgba(32,54,45,.025);
+}
+.calendar-grid .cal-day span{background:#edf6ef;color:#3c7659}
+.cal-day.today{box-shadow:inset 0 0 0 2px #c9974c}
+.calendar-head h3{color:#20362d}
+.invoice-preview-shell{background:#f2f5f2!important;border-color:#d9e2db!important}
+.invoice-toolbar,.invoice-actions{background:#fff!important;border-color:#e1e8e1!important;color:#20362d!important}
+@media(max-width:700px){
+  .view{padding:20px 14px}
+  .view#dashboard>.heading{min-height:175px;padding:22px 18px}
+  .view#dashboard>.heading h1{font-size:28px}
+  .view#dashboard>.heading:after{right:18px;font-size:11px;bottom:16px}
+  .cards article{min-height:112px}
+  .app aside{box-shadow:10px 0 30px rgba(32,54,45,.14)}
+}
