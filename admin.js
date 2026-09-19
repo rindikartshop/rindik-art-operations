@@ -6,7 +6,7 @@ const data={
   orders:[],attendance:[],targets:[],customers:[],products:[],production:[],agenda:[],
   artisans:[],invoices:[],exportShipments:[],expenses:[],payments:[],employees:[],payroll:[],companySettings:null
 };
-let mode='login',activeForm='',editingId=null,starting=false;
+let mode='login',activeForm='',editingId=null,starting=false;data.role='Owner/Admin';
 
 const el=id=>document.getElementById(id);
 const msg=(id,v)=>{const x=el(id);if(x)x.textContent=v||''};
@@ -262,7 +262,7 @@ async function load(){
   const es=Object.entries(q),rs=await Promise.all(es.map(([,x])=>x)),bad=rs.find(x=>x.error);
   if(bad){console.error(bad.error);msg('settingsMessage',bad.error.message||'Data belum bisa dimuat.');return false}
   es.forEach(([k],i)=>{if(k!=='settings')data[k]=rs[i].data||[]});
-  const st=rs[es.findIndex(x=>x[0]==='settings')].data;
+  const st=rs[es.findIndex(x=>x[0]==='settings')].data;const {data:{user:currentUser}}=await db.auth.getUser();if(currentUser){const rr=await db.from('user_roles').select('role').eq('user_id',currentUser.id).maybeSingle();if(rr.data?.role)data.role=rr.data.role;else await db.from('user_roles').insert({user_id:currentUser.id,role:'Owner/Admin'});}document.querySelectorAll('[data-role]').forEach(a=>a.hidden=!a.dataset.role.split(',').includes(data.role));
   data.companySettings=st||{company_name:'Rindik Art',admin_name:''};
   data.agenda=rs[es.findIndex(x=>x[0]==='agenda')].data||[];
   if(st){el('companyName').value=st.company_name||'Rindik Art';el('adminName').value=st.admin_name||'';el('companyAddress').value=st.company_address||'';el('companyPhone').value=st.company_phone||'';el('companyEmail').value=st.company_email||'';el('companyWebsite').value=st.company_website||'';el('instagram').value=st.instagram||'';el('bankName').value=st.bank_name||'';el('bankAccount').value=st.bank_account||'';el('bankHolder').value=st.bank_holder||'';el('tagline').value=st.tagline||'';el('headerName').textContent=st.company_name||'Rindik Art'}
