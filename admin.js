@@ -402,6 +402,7 @@ document.addEventListener('change',e=>{
   const opt=[...list.options].find(o=>String(o.value).trim().toLowerCase()===val);
   if(opt)hidden.value=opt.dataset.id;
 });
+el('cancelModal')?.addEventListener('click',()=>{el('modal').hidden=true;editingId=null;activeForm='';el('dataForm').reset();msg('formMessage','')});
 el('dataForm').onsubmit=async e=>{
   e.preventDefault();
   msg('formMessage','Menyimpan...');
