@@ -132,7 +132,7 @@ function relationOptions(type,value,name,required=false){
   const selectedText=selected?(selected.label+(selected.code&&selected.label.indexOf(selected.code)<0?' · '+selected.code:'')):'';
   const listId=key+'-list';
   const opts=items.map(x=>'<option data-id="'+esc(x.id)+'" value="'+esc(x.label+(x.code&&x.label.indexOf(x.code)<0?' · '+x.code:''))+'"></option>').join('');
-  return '<div class="relation-search-wrap"><input class="relation-search" type="text" list="'+listId+'" placeholder="'+placeholder+'" value="'+esc(selectedText)+'" autocomplete="off" data-relation-type="'+esc(type)+'" data-relation-name="'+esc(name||'')+'"'+(required?' required':'')+'><datalist id="'+listId+'">'+opts+'</datalist><input type="hidden" name="'+esc(name||'')+'" value="'+esc(value||'')+'"'+req+'></div>';
+  return '<div class="relation-search-wrap"><input class="relation-search" type="text" list="'+listId+'" placeholder="'+placeholder+'" value="'+esc(selectedText)+'" autocomplete="off" data-relation-type="'+esc(type)+'" data-relation-name="'+esc(name||'')+'"'+(required?' required':'')+'><datalist id="'+listId+'">'+opts+'</datalist><input type="hidden" name="'+esc(name||'')+'" value="'+esc(value||'')+'"'+(required?'':'')+'></div>';
 }
 function fieldHtml(field,row){
   const [name,label,type,required,choices]=field;
@@ -405,6 +405,11 @@ el('dataForm').onsubmit=async e=>{
   e.preventDefault();
   msg('formMessage','Menyimpan...');
   const f=forms[activeForm];
+  const relationRequired=[...e.target.querySelectorAll('.relation-search')].filter(x=>x.required);
+  for(const input of relationRequired){
+    const hidden=input.parentElement.querySelector('input[type="hidden"]');
+    if(!hidden?.value){msg('formMessage','Pilih data dari hasil pencarian untuk: '+(input.closest('label')?.firstChild?.textContent||'data'));input.focus();return}
+  }
   const raw=Object.fromEntries(new FormData(e.target));
   Object.keys(raw).forEach(k=>{if(raw[k]==='')delete raw[k]});
   if(activeForm==='order'){
