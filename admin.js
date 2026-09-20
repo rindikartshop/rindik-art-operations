@@ -617,5 +617,35 @@ function printInvoice(id){openInvoicePreview(id)}
 el('closeInvoicePreview')?.addEventListener('click',()=>el('invoicePreviewModal').hidden=true);
 el('closeInvoicePreview2')?.addEventListener('click',()=>el('invoicePreviewModal').hidden=true);
 
-function calcFob(){const ids=['fobProduct','fobPacking','fobTrucking','fobForwarder','fobBank','fobCoo','fobPhyto','fobDuty','fobOther'];const n=id=>Number(el(id)?.value||0);const qty=n('fobQty')||1;const product=n('fobProduct')*qty;const costs=ids.slice(1).reduce((s,id)=>s+n(id),0);const total=product+costs;el('fobProductTotal')&&(el('fobProductTotal').textContent=money(product));el('fobCostTotal')&&(el('fobCostTotal').textContent=money(costs));el('fobGrandTotal')&&(el('fobGrandTotal').textContent=money(total));el('fobPerPiece')&&(el('fobPerPiece').textContent=money(total/qty))}document.querySelectorAll('#export input').forEach(i=>i.addEventListener('input',calcFob));document.querySelectorAll('.fob-calculator input').forEach(i=>i.addEventListener('input',calcFob));
-function calcFob(){const n=id=>Number(el(id)?.value||0),q=n('fobQty')||1,p=n('fobProduct')*q,c=n('fobPacking')+n('fobTrucking')+n('fobForwarder')+n('fobBank')+n('fobCoo')+n('fobPhyto')+n('fobDuty')+n('fobOther'),t=p+c;el('fobProductTotal')&&(el('fobProductTotal').textContent=money(p));el('fobCostTotal')&&(el('fobCostTotal').textContent=money(c));el('fobGrandTotal')&&(el('fobGrandTotal').textContent=money(t));el('fobPerPiece')&&(el('fobPerPiece').textContent=money(t/q))}document.querySelectorAll('.fob-calculator input').forEach(i=>i.addEventListener('input',calcFob));
+function calcFob(){
+  const n=id=>Math.max(0,Number(el(id)?.value||0));
+  const qty=Math.max(1,Math.floor(n('fobQty')||1));
+  const productPrice=n('fobProduct');
+  const productTotal=productPrice*qty;
+
+  const pcsCarton=Math.max(1,Math.floor(n('fobPcsCarton')||1));
+  const cartons=Math.ceil(qty/pcsCarton);
+  const cartonCbm=(n('fobCartonLength')*n('fobCartonWidth')*n('fobCartonHeight'))/1000000;
+  const totalCbm=cartonCbm*cartons;
+  const grossWeight=(n('fobProductWeight')*qty)+(n('fobCartonWeight')*cartons);
+
+  const costIds=['fobPacking','fobTrucking','fobHandling','fobForwarder','fobCustoms','fobPort','fobCoo','fobPhyto','fobFumigation','fobBank','fobDuty','fobOther'];
+  const costs=costIds.reduce((sum,id)=>sum+n(id),0);
+  const total=productTotal+costs;
+  const costPerPiece=costs/qty;
+  const perPiece=total/qty;
+  const usdRate=Math.max(1,n('fobUsdRate')||1);
+  const perPieceUsd=perPiece/usdRate;
+
+  el('fobProductTotal')&&(el('fobProductTotal').textContent=money(productTotal));
+  el('fobCostTotal')&&(el('fobCostTotal').textContent=money(costs));
+  el('fobCostPerPiece')&&(el('fobCostPerPiece').textContent=money(costPerPiece));
+  el('fobGrandTotal')&&(el('fobGrandTotal').textContent=money(total));
+  el('fobPerPiece')&&(el('fobPerPiece').textContent=money(perPiece));
+  el('fobPerPieceUsd')&&(el('fobPerPieceUsd').textContent='$ '+perPieceUsd.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}));
+  el('fobCartons')&&(el('fobCartons').textContent=new Intl.NumberFormat('id-ID').format(cartons));
+  el('fobTotalCbm')&&(el('fobTotalCbm').textContent=totalCbm.toLocaleString('id-ID',{minimumFractionDigits:3,maximumFractionDigits:4}));
+  el('fobGrossWeight')&&(el('fobGrossWeight').textContent=grossWeight.toLocaleString('id-ID',{minimumFractionDigits:2,maximumFractionDigits:2})+' kg');
+}
+document.querySelectorAll('.fob-calculator input').forEach(i=>i.addEventListener('input',calcFob));
+calcFob();
