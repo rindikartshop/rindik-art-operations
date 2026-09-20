@@ -95,7 +95,50 @@
       </section>
 
       <section class="view" id="invoices"><div class="heading"><div><p class="eyebrow">TAGIHAN</p><h1>Invoice</h1><p>Draft, terkirim, sebagian, lunas dan batal.</p></div><button class="primary" data-open="invoice">＋ Invoice</button></div><div class="summary-strip"><article><span>Total Invoice</span><b id="invoiceCount">0</b></article><article><span>Total Tagihan</span><b id="invoiceValue">Rp 0</b></article><article><span>Sudah Dibayar</span><b id="invoicePaid">Rp 0</b></article><article><span>Sisa Piutang</span><b id="invoiceDue">Rp 0</b></article></div><section class="panel"><div class="table"><table><thead><tr><th>NO INVOICE</th><th>TANGGAL</th><th>JATUH TEMPO</th><th>TOTAL</th><th>DIBAYAR</th><th>STATUS</th></tr></thead><tbody id="invoicesRows"></tbody></table></div></section></section>
-      <section class="view" id="export"><div class="heading"><div><p class="eyebrow">EXPORT</p><h1>Export & FOB</h1><p>Shipment, CBM, karton, pcs dan FOB.</p></div><button class="primary" data-open="export">＋ Shipment</button></div><div class="summary-strip"><article><span>Total Shipment</span><b id="shipmentCount">0</b></article><article><span>Total CBM</span><b id="shipmentCbm">0</b></article><article><span>Total PCS</span><b id="shipmentPcs">0</b></article><article><span>Total FOB</span><b id="shipmentFob">0</b></article></div><section class="panel fob-calculator"><div class="panel-head"><div><h3>Kalkulator FOB</h3><p>Hitung total biaya ekspor dan FOB per pcs secara otomatis.</p></div></div><div class="form fob-grid"><label>Harga produk / pcs<input id="fobProduct" type="number" value="0"></label><label>Qty / pcs<input id="fobQty" type="number" value="250"></label><label>Packaging<input id="fobPacking" type="number" value="0"></label><label>Trucking / gudang<input id="fobTrucking" type="number" value="0"></label><label>Forwarder<input id="fobForwarder" type="number" value="0"></label><label>Bank<input id="fobBank" type="number" value="0"></label><label>COO<input id="fobCoo" type="number" value="0"></label><label>Phytosanitary<input id="fobPhyto" type="number" value="0"></label><label>Bea keluar<input id="fobDuty" type="number" value="0"></label><label>Biaya lain<input id="fobOther" type="number" value="0"></label></div><div class="summary-strip"><article><span>Total produk</span><b id="fobProductTotal">Rp 0</b></article><article><span>Total biaya ekspor</span><b id="fobCostTotal">Rp 0</b></article><article><span>Total FOB</span><b id="fobGrandTotal">Rp 0</b></article><article><span>FOB / pcs</span><b id="fobPerPiece">Rp 0</b></article></div></section><section class="panel"><div class="table"><table><thead><tr><th>KODE</th><th>NEGARA</th><th>DESTINASI</th><th>CBM</th><th>KARTON</th><th>PCS</th><th>FOB</th><th>STATUS</th></tr></thead><tbody id="exportRows"></tbody></table></div></section></section>
+      <section class="view" id="export"><div class="heading"><div><p class="eyebrow">EXPORT</p><h1>Export & FOB</h1><p>Shipment, CBM, karton, pcs dan FOB.</p></div><button class="primary" data-open="export">＋ Shipment</button></div><div class="summary-strip"><article><span>Total Shipment</span><b id="shipmentCount">0</b></article><article><span>Total CBM</span><b id="shipmentCbm">0</b></article><article><span>Total PCS</span><b id="shipmentPcs">0</b></article><article><span>Total FOB</span><b id="shipmentFob">0</b></article></div><section class="panel fob-calculator">
+  <div class="panel-head"><div><h3>Kalkulator FOB Lengkap</h3><p>Isi data produk, kemasan, kurs, dan biaya ekspor. Hasil FOB, CBM, karton, berat, dan USD dihitung otomatis.</p></div></div>
+  <div class="form fob-grid">
+    <label>Nama produk<input id="fobProductName" type="text" placeholder="Contoh: Rattan Storage Basket"></label>
+    <label>SKU<input id="fobSku" type="text" placeholder="Contoh: RSB-001"></label>
+    <label>Harga produk / pcs (IDR)<input id="fobProduct" type="number" min="0" step="1000" value="0"></label>
+    <label>Qty / MOQ (pcs)<input id="fobQty" type="number" min="1" step="1" value="250"></label>
+    <label>Berat produk / pcs (kg)<input id="fobProductWeight" type="number" min="0" step="0.01" value="0"></label>
+    <label>Panjang produk (cm)<input id="fobProductLength" type="number" min="0" step="0.1" value="0"></label>
+    <label>Lebar produk (cm)<input id="fobProductWidth" type="number" min="0" step="0.1" value="0"></label>
+    <label>Tinggi produk (cm)<input id="fobProductHeight" type="number" min="0" step="0.1" value="0"></label>
+
+    <label>PCS / karton<input id="fobPcsCarton" type="number" min="1" step="1" value="1"></label>
+    <label>Panjang karton (cm)<input id="fobCartonLength" type="number" min="0" step="0.1" value="0"></label>
+    <label>Lebar karton (cm)<input id="fobCartonWidth" type="number" min="0" step="0.1" value="0"></label>
+    <label>Tinggi karton (cm)<input id="fobCartonHeight" type="number" min="0" step="0.1" value="0"></label>
+    <label>Berat karton kosong / karton (kg)<input id="fobCartonWeight" type="number" min="0" step="0.01" value="0"></label>
+    <label>Kurs USD / IDR<input id="fobUsdRate" type="number" min="1" step="1" value="17000"></label>
+
+    <label>Packaging<input id="fobPacking" type="number" min="0" step="1000" value="0"></label>
+    <label>Trucking / gudang<input id="fobTrucking" type="number" min="0" step="1000" value="0"></label>
+    <label>Loading & handling<input id="fobHandling" type="number" min="0" step="1000" value="0"></label>
+    <label>Forwarder / freight document<input id="fobForwarder" type="number" min="0" step="1000" value="0"></label>
+    <label>PEB / customs clearance<input id="fobCustoms" type="number" min="0" step="1000" value="0"></label>
+    <label>Terminal / pelabuhan<input id="fobPort" type="number" min="0" step="1000" value="0"></label>
+    <label>COO / SKA<input id="fobCoo" type="number" min="0" step="1000" value="0"></label>
+    <label>Phytosanitary<input id="fobPhyto" type="number" min="0" step="1000" value="0"></label>
+    <label>Fumigasi<input id="fobFumigation" type="number" min="0" step="1000" value="0"></label>
+    <label>Bank charge<input id="fobBank" type="number" min="0" step="1000" value="0"></label>
+    <label>Bea keluar<input id="fobDuty" type="number" min="0" step="1000" value="0"></label>
+    <label>Biaya lain-lain<input id="fobOther" type="number" min="0" step="1000" value="0"></label>
+  </div>
+  <div class="summary-strip">
+    <article><span>Total produk</span><b id="fobProductTotal">Rp 0</b></article>
+    <article><span>Total biaya ekspor</span><b id="fobCostTotal">Rp 0</b></article>
+    <article><span>Biaya ekspor / pcs</span><b id="fobCostPerPiece">Rp 0</b></article>
+    <article><span>Total FOB</span><b id="fobGrandTotal">Rp 0</b></article>
+    <article><span>FOB / pcs</span><b id="fobPerPiece">Rp 0</b></article>
+    <article><span>FOB / pcs (USD)</span><b id="fobPerPieceUsd">$ 0.00</b></article>
+    <article><span>Jumlah karton</span><b id="fobCartons">0</b></article>
+    <article><span>Total CBM</span><b id="fobTotalCbm">0.000</b></article>
+    <article><span>Estimasi berat kotor</span><b id="fobGrossWeight">0.00 kg</b></article>
+  </div>
+</section><section class="panel"><div class="table"><table><thead><tr><th>KODE</th><th>NEGARA</th><th>DESTINASI</th><th>CBM</th><th>KARTON</th><th>PCS</th><th>FOB</th><th>STATUS</th></tr></thead><tbody id="exportRows"></tbody></table></div></section></section>
       <section class="view" id="finance"><div class="heading"><div><p class="eyebrow">CASHFLOW & PIUTANG</p><h1>Keuangan</h1><p>Kelola pengeluaran, pembayaran customer dan piutang invoice.</p></div><div class="heading-actions"><button class="primary" data-open="payment">＋ Pembayaran</button><button class="secondary" data-open="expense">＋ Pengeluaran</button></div></div><div class="cards"><article><span>↓</span><p>Total Pengeluaran</p><h2 id="expensesTotal">Rp 0</h2></article><article><span>↑</span><p>Total Pembayaran</p><h2 id="paymentsTotal">Rp 0</h2></article><article><span>◌</span><p>Total Piutang</p><h2 id="receivablesTotal">Rp 0</h2></article></div><section class="panel"><div class="panel-head"><div><h3>Pembayaran Customer</h3><p>Setiap pembayaran otomatis memperbarui invoice.</p></div></div><div class="table"><table><thead><tr><th>TANGGAL</th><th>INVOICE</th><th>ORDER</th><th>JUMLAH</th><th>METODE</th><th>REFERENSI</th></tr></thead><tbody id="paymentsRows"></tbody></table></div></section><section class="panel"><h3>Pengeluaran Terbaru</h3><div class="table"><table><thead><tr><th>TANGGAL</th><th>KATEGORI</th><th>KETERANGAN</th><th>METODE</th><th>JUMLAH</th></tr></thead><tbody id="expensesRows"></tbody></table></div></section></section>
             <section class="view" id="agenda"><div class="heading"><div><p class="eyebrow">AGENDA</p><h1>Agenda & Kalender</h1><p>Catat jadwal, follow-up customer, deadline produksi, pengiriman dan kegiatan penting.</p></div><div class="heading-actions"><button class="primary" data-open="agenda">＋ Agenda</button><button class="secondary" id="requestNotify" type="button">🔔 Aktifkan Notifikasi</button></div></div><div id="notificationPanel" class="notification-panel"></div><div class="calendar-head"><button class="secondary" id="prevMonth" type="button">‹</button><h3 id="calendarTitle">Kalender</h3><button class="secondary" id="nextMonth" type="button">›</button></div><div id="calendarGrid" class="calendar-grid"></div><section class="panel"><div class="panel-head"><div><h3>Daftar Agenda</h3><p>Agenda terdekat dan yang sudah lewat.</p></div></div><div class="table"><table><thead><tr><th>TANGGAL</th><th>JAM</th><th>AGENDA</th><th>KATEGORI</th><th>STATUS</th><th>AKSI</th></tr></thead><tbody id="agendaRows"></tbody></table></div></section></section><section class="view" id="targets">
         <div class="heading"><div><p class="eyebrow">KINERJA BISNIS</p><h1>Target &amp; Pencapaian</h1><p>Ukur progres sasaran bisnis Anda.</p></div><button class="primary" data-open="target">＋ Tambah Target</button></div>
