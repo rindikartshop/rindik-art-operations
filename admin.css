@@ -322,3 +322,131 @@ td{color:#4a4035;border-color:#eee7dc}
 .relation-search-wrap{display:grid;gap:6px}.relation-search{width:100%;box-sizing:border-box;padding:11px 13px;border:1px solid #d8e0db;border-radius:10px;background:#fff;font:inherit;outline:none}.relation-search:focus{border-color:#6b8f78;box-shadow:0 0 0 3px rgba(107,143,120,.12)}.relation-search::placeholder{color:#8a958e}.relation-add-wrap{display:grid;gap:7px}.field-help{display:block;color:#6f7b73;font-size:12px;line-height:1.4}
 
 .form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;position:sticky;bottom:0;background:#fffdf8;padding-top:10px}.modal-card{max-height:90vh;overflow:auto}.modal-card .form-actions .primary{min-width:150px}.modal-card .form-actions .secondary{min-width:90px}
+
+
+/* RINDIK ART — NATURAL RATTAN VISUAL REFRESH 2026-09-20 */
+:root{
+  --ink:#3a2d21;
+  --green:#536f45;
+  --green-dark:#405a3a;
+  --cream:#f7efe1;
+  --cream-2:#efe2cd;
+  --rattan:#c9a56b;
+  --rattan-light:#ead8b8;
+  --line:#dfcfb5;
+  --muted:#766958;
+  --panel:#fffaf1;
+}
+html,body{background:#f7efe1!important}
+body{
+  color:var(--ink)!important;
+  background:
+    radial-gradient(circle at 12% 12%,rgba(205,169,105,.16),transparent 24%),
+    radial-gradient(circle at 88% 20%,rgba(91,117,72,.10),transparent 24%),
+    repeating-linear-gradient(0deg,rgba(123,91,47,.025) 0,rgba(123,91,47,.025) 1px,transparent 1px,transparent 6px),
+    linear-gradient(135deg,#fbf6ed 0%,#f2e5d0 50%,#fbf7ef 100%)!important;
+}
+.app aside{
+  background:
+    repeating-linear-gradient(90deg,rgba(145,105,55,.035) 0,rgba(145,105,55,.035) 1px,transparent 1px,transparent 7px),
+    rgba(255,250,241,.97)!important;
+  border-right:1px solid #dfcfb5!important;
+}
+.side-logo{width:126px;height:92px}
+.workspace{color:#9b8870!important}
+.workspace b{color:#3a2d21!important}
+nav a{color:#625646!important;border-radius:12px}
+nav a:hover{background:#efe2cd!important;color:#405a3a!important}
+nav a.active{
+  background:linear-gradient(90deg,#dfe7d5,#eee4d2)!important;
+  color:#3f5d3d!important;
+  box-shadow:inset 4px 0 0 #a97832,0 3px 10px rgba(83,63,38,.07)!important;
+}
+header{
+  background:rgba(255,250,242,.94)!important;
+  border-bottom:1px solid #dfcfb5!important;
+  box-shadow:0 3px 18px rgba(83,65,42,.06)!important;
+}
+header b{color:#3a2d21!important}
+header small{color:#827362!important}
+.view{padding:30px 38px!important}
+.view#dashboard>.heading{
+  min-height:165px;
+  background:
+    linear-gradient(100deg,rgba(250,244,232,.97),rgba(239,226,202,.90)),
+    radial-gradient(circle at 85% 30%,rgba(174,132,68,.20),transparent 35%)!important;
+  border-color:#d9c5a3!important;
+  box-shadow:0 12px 30px rgba(83,65,42,.09)!important;
+}
+.view#dashboard>.heading:before{
+  content:'';
+  position:absolute;inset:0;
+  opacity:.18;
+  background:
+    repeating-linear-gradient(45deg,transparent 0,transparent 5px,rgba(123,91,47,.10) 5px,rgba(123,91,47,.10) 6px);
+  pointer-events:none;
+}
+.view#dashboard>.heading h1{color:#3a2d21!important;position:relative}
+.view#dashboard>.heading p{color:#716354!important;position:relative}
+.view#dashboard>.heading:after{color:#916b35!important;z-index:1}
+.cards article,.panel,.summary-strip article{
+  background:
+    linear-gradient(135deg,rgba(255,252,245,.98),rgba(250,241,226,.98))!important;
+  border-color:#e1d1b8!important;
+  box-shadow:0 8px 24px rgba(83,65,42,.065)!important;
+  border-radius:14px!important;
+}
+.cards article:hover{box-shadow:0 12px 28px rgba(83,65,42,.11)!important}
+.cards span{
+  background:#e7eadc!important;
+  color:#4d6845!important;
+  border:1px solid #d8ddc8;
+}
+.cards p,.panel p,.summary-strip span{color:#796d5f!important}
+.cards h2,.summary-strip b,.panel h3{color:#3a2d21!important}
+.panel-head a{color:#536f45!important}
+table{background:rgba(255,252,246,.55);border-radius:10px}
+th{color:#968570!important}
+td{color:#4d4135!important;border-color:#eee4d4!important}
+.tag{background:#e6eddc!important;color:#4d7048!important}
+.primary{
+  background:#536f45!important;
+  border-color:#536f45!important;
+  box-shadow:0 5px 12px rgba(83,111,69,.16)!important;
+}
+.primary:hover{background:#405a3a!important}
+.secondary,.row-btn{
+  background:#fffaf1!important;
+  border-color:#d9cbb5!important;
+  color:#536446!important;
+}
+.secondary:hover,.row-btn:hover{background:#f2e7d5!important}
+.row-btn.danger{background:#fff8f4!important}
+.modal-card,.auth-card{
+  background:#fffaf1!important;
+  border-color:#dfcfb5!important;
+}
+.modal-card input,.modal-card select,.auth input,.form input,.form select{
+  background:#fffdf8!important;
+  color:#3a2d21!important;
+  border-color:#d9cbb5!important;
+}
+.modal{background:rgba(62,48,34,.27)!important}
+.notification-panel .notice,.order-alert{
+  background:#fffaf1!important;
+  border-color:#e1d2bb!important;
+}
+.calendar-grid .cal-day{
+  background:#fffaf1!important;
+  border-color:#e1d2bb!important;
+}
+.calendar-grid .cal-day span{background:#e9efdf!important;color:#4f7048!important}
+.cal-day.today{box-shadow:inset 0 0 0 2px #b98938!important}
+.invoice-preview-shell{background:#eee2cf!important}
+.invoice-toolbar,.invoice-actions{background:#fffaf1!important;color:#3a2d21!important}
+.form-actions{background:#fffaf1!important}
+@media(max-width:700px){
+  .view{padding:20px 14px!important}
+  .cards{gap:9px}
+  .cards article{border-radius:12px!important}
+}
