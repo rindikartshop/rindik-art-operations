@@ -340,7 +340,7 @@ function render(){
   el('ordersRows').innerHTML=o.map(x=>'<tr>'+orderCells(x)+action('orders',x.id)+'</tr>').join('')||'<tr><td colspan="6">Belum ada pesanan.</td></tr>';
   el('customersRows').innerHTML=data.customers.map(x=>'<tr><td>'+esc(x.customer_code||'—')+'</td><td>'+esc(x.name)+'</td><td>'+esc(x.company_name||'—')+'</td><td>'+esc(x.country||'Indonesia')+'</td><td>'+esc(x.customer_type||'—')+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td>'+action('customers',x.id)+'</tr>').join('')||'<tr><td colspan="7">Belum ada customer.</td></tr>';
   if(typeof window.renderBuyerEnhancements==='function')window.renderBuyerEnhancements();
-  el('productsRows').innerHTML=data.products.map(x=>'<tr><td>'+esc(x.sku)+'</td><td>'+esc(x.name)+'</td><td>'+esc(x.category||'—')+'</td><td>'+money(x.selling_price)+'</td><td>'+Number(x.stock||0)+'</td><td>'+Number(x.min_stock||0)+'</td>'+action('products',x.id)+'</tr>').join('')||'<tr><td colspan="7">Belum ada produk.</td></tr>';
+  el('productsRows').innerHTML=data.products.map(x=>'<tr><td>'+esc(x.sku)+'</td><td>'+(x.image_url?'<img class="product-thumb" src="'+esc(x.image_url)+'" alt="'+esc(x.name)+'">':'<span class="product-thumb-empty">📷</span>')+'</td><td><b>'+esc(x.name)+'</b><br><small>'+esc(x.material||x.category||'')+'</small></td><td>'+money(x.selling_price)+'</td><td>'+Number(x.stock||0)+'</td><td>'+Number(x.min_stock||0)+'</td>'+action('products',x.id)+'</tr>').join('')||'<tr><td colspan="7">Belum ada produk.</td></tr>';
   el('productionRows').innerHTML=data.production.map(x=>'<tr><td>'+esc(x.production_code)+'</td><td>'+esc(data.products.find(p=>String(p.id)===String(x.product_id))?.name||x.product_name||'—')+'</td><td>'+Number(x.qty_planned||0)+' / '+Number(x.qty_completed||0)+'</td><td>'+esc(data.artisans.find(a=>String(a.id)===String(x.artisan_id))?.name||'—')+'</td><td>'+date(x.due_date)+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td>'+action('production_orders',x.id)+'</tr>').join('')||'<tr><td colspan="7">Belum ada produksi.</td></tr>';
   el('artisansRows').innerHTML=data.artisans.map(x=>'<tr><td>'+esc(x.artisan_code||'—')+'</td><td>'+esc(x.name)+'</td><td>'+esc(x.skill||'—')+'</td><td>'+Number(x.daily_capacity||0)+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td>'+action('artisans',x.id)+'</tr>').join('')||'<tr><td colspan="6">Belum ada pengrajin.</td></tr>';
   el('attendanceRows').innerHTML=data.attendance.map(x=>'<tr><td>'+esc(x.employee_name)+'</td><td>'+esc(x.division||'—')+'</td><td>'+date(x.attendance_date)+'</td><td>'+time(x.check_in)+'</td><td>'+time(x.check_out)+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td><td>'+(x.check_in&&!x.check_out?'<button type="button" class="row-btn" data-action="checkout" data-id="'+x.id+'">Pulang</button>':'')+'<button type="button" class="row-btn" data-action="edit" data-table="attendance" data-id="'+x.id+'">Edit</button><button type="button" class="row-btn danger" data-action="delete" data-table="attendance" data-id="'+x.id+'">Hapus</button></td></tr>').join('')||'<tr><td colspan="7">Belum ada absensi.</td></tr>';
@@ -419,7 +419,19 @@ el('dataForm').onsubmit=async e=>{
     if(!hidden?.value){msg('formMessage','Pilih data dari hasil pencarian untuk: '+(input.closest('label')?.firstChild?.textContent||'data'));input.focus();return}
   }
   const raw=Object.fromEntries(new FormData(e.target));
+  const photoFile=raw.image_file instanceof File && raw.image_file.size ? raw.image_file : null;
+  delete raw.image_file;
   Object.keys(raw).forEach(k=>{if(raw[k]==='')delete raw[k]});
+  if(activeForm==='product'&&photoFile){
+    msg('formMessage','Mengunggah foto produk...');
+    const safeSku=String(raw.sku||editingId||'product').replace(/[^a-zA-Z0-9_-]/g,'-');
+    const ext=(photoFile.name.split('.').pop()||'jpg').toLowerCase();
+    const path=safeSku+'-'+Date.now()+'.'+ext;
+    const up=await db.storage.from('product-images').upload(path,photoFile,{upsert:true,contentType:photoFile.type||'image/jpeg',cacheControl:'31536000'});
+    if(up.error){msg('formMessage','Foto gagal diunggah: '+up.error.message);return}
+    const pub=db.storage.from('product-images').getPublicUrl(up.data.path);
+    raw.image_url=pub.data.publicUrl;
+  }
   if(activeForm==='order'){
     raw.order_date=raw.order_date||today();raw.quantity=Number(raw.quantity||1);raw.unit_price=Number(raw.unit_price||0);
     raw.total_amount=raw.quantity*raw.unit_price;raw.dp_amount=Number(raw.dp_amount||0);
