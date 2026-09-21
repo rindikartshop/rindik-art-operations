@@ -450,3 +450,6 @@ td{color:#4d4135!important;border-color:#eee4d4!important}
   .cards{gap:9px}
   .cards article{border-radius:12px!important}
 }
+
+/* Product photo library */
+.product-thumb{width:58px;height:58px;object-fit:cover;border-radius:10px;border:1px solid rgba(0,0,0,.12);display:block;background:#f5f1e8}.product-thumb-empty{width:58px;height:58px;border-radius:10px;background:#f5f1e8;display:flex;align-items:center;justify-content:center;font-size:24px}.product-photo-preview{display:block;width:140px;height:140px;object-fit:cover;border-radius:14px;border:1px solid #ddd;margin-top:8px}.product-photo-upload-preview{min-height:10px}.form small{display:block;color:#777;margin-top:5px}
