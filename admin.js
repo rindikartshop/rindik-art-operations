@@ -565,8 +565,10 @@ document.addEventListener('click',async e=>{
   const b=e.target.closest('[data-action]');if(!b)return;
   const act=b.dataset.action,id=b.dataset.id,table=b.dataset.table;
   if(act==='edit'){
-    const key={production_orders:'production',export_shipments:'export',business_targets:'target',orders:'order',employees:'employee',payroll:'payrollForm',customers:'customer',products:'product',artisans:'artisan',attendance:'attendance',invoices:'invoice',expenses:'expense',payments:'payment'}[table];
-    const row=data[key]?.find(x=>String(x.id)===String(id));if(row)openForm(key,row);
+    const key={production_orders:'production',export_shipments:'export',business_targets:'target',orders:'order',employees:'employee',payroll:'payrollForm',customers:'customer',products:'product',artisans:'artisan',attendance:'attendance',invoices:'invoice',expenses:'expense',payments:'payment',agenda_events:'agenda'}[table] || Object.keys(forms).find(k=>forms[k].table===table);
+    const row=key?data[{production:'production',export:'export',target:'targets',order:'orders',payrollForm:'payroll',customer:'customers',product:'products',artisan:'artisans',attendance:'attendance',invoice:'invoices',expense:'expenses',payment:'payments',agenda:'agenda'}[key]||key]?.find(x=>String(x.id)===String(id)):null;
+    if(row){openForm(key,row);setTimeout(()=>{el('formMessage')&&msg('formMessage','Data dimuat. Silakan ubah kolom yang diperlukan lalu tekan Simpan.');},0);}
+    else console.warn('Data edit tidak ditemukan',table,id);
   }
   if(act==='delete'){
     if(!confirm('Hapus data ini? Tindakan ini tidak dapat dibatalkan.'))return;
