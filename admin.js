@@ -144,6 +144,10 @@ function fieldHtml(field,row){
   const req=required?' required':'';
   if(name==='active'&&type==='select'&&Array.isArray(choices)) value=value===true?'Ya':value===false?'Tidak':value;
   if(type==='datetime-local'&&value){const d=new Date(value);if(!Number.isNaN(d.getTime()))value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
+  if(name==='image_url'){
+    const current=value?'<img class="product-photo-preview" src="'+esc(value)+'" alt="Foto produk" onerror="this.style.display=\'none\'">':'';
+    return '<label>Foto produk <input name="image_file" type="file" accept="image/*" capture="environment"><small>Pilih foto produk dari HP/laptop. Foto disimpan online dan bisa dilihat dari semua perangkat.</small><div class="product-photo-upload-preview">'+current+'</div><input name="image_url" type="hidden" value="'+esc(value)+'"></label>';
+  }
   if(['customer','product','order','invoice','product_id','artisan_id'].includes(type)){
     let html=relationOptions(type,value,name,!!required);
     if(activeForm==='order'&&(type==='customer'||type==='product')){
