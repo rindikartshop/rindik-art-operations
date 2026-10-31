@@ -222,9 +222,13 @@ function openForm(type,row=null){
   msg('formMessage','');
   const fields=el('formFields');
   if(!fields){console.error('formFields tidak ditemukan');return}
-  fields.innerHTML=f.fields.map(x=>fieldHtml(x,row)).join('');
+  if(type==='order'&&!editingId){
+    const code='PO-'+today().replaceAll('-','')+'-'+String(data.orders.length+1).padStart(3,'0');
+    fields.innerHTML='<label>Kode PO<input name="order_code" value="'+code+'" required></label><label>Tanggal order<input name="order_date" type="date" value="'+today()+'" required></label><label>Target kirim<input name="due_date" type="date" required></label><label>Customer / Buyer'+relationOptions('customer','','customer_id',true)+'<button type="button" class="secondary relation-add-btn" data-quick-add="customer">＋ Customer baru</button></label><div class="multi-order-box"><div class="multi-order-title"><div><b>Daftar Produk / Varian</b><small>Tambahkan semua varian dalam satu PO.</small></div><button type="button" class="secondary" id="addMultiOrderLine">＋ Tambah Produk</button></div><div class="multi-order-head"><span>Produk / Varian</span><span>Qty</span><span>Harga / pcs</span><span>Total</span><span></span></div><div id="multiOrderLines"></div><input type="hidden" id="multiOrderLinesJson" name="lines_json"></div><div class="multi-order-summary"><label>DP / Uang muka<input id="multiOrderDp" name="dp_amount" type="number" min="0" value="0"></label><div><small>Total seluruh produk</small><b id="multiOrderGrand">Rp 0</b><small id="multiOrderQty">0 pcs</small><small>Sisa setelah DP: <strong id="multiOrderBalance">Rp 0</strong></small></div></div><label>Status<select name="status"><option>Baru</option><option>Menunggu Pembayaran</option><option>Diproduksi</option><option>Siap Kirim</option><option>Selesai</option><option>Batal</option></select></label><label>Pembayaran<select name="payment_status"><option>Belum Lunas</option><option>DP</option><option>Lunas</option></select></label><label>Mata uang<select name="currency"><option>IDR</option><option>USD</option></select></label><label>Catatan<textarea name="notes" rows="2"></textarea></label>';
+  }else fields.innerHTML=f.fields.map(x=>fieldHtml(x,row)).join('');
   fields.style.display='grid';
   fields.style.gap='2px';
+  if(type==='order'&&!editingId)bindMultiOrderBuilder();
   if(type==='customer'&&!editingId&&!row?.customer_code){
     const n=String(data.customers.length+1).padStart(3,'0');
     fields.querySelector('[name="customer_code"]').value='CUS-'+n;
@@ -271,6 +275,62 @@ function openForm(type,row=null){
     q?.addEventListener('input',calc);u?.addEventListener('input',calc);calc();
   }
   el('modal').hidden=false;
+}
+
+
+function groupOrders(rows){
+  const map=new Map();
+  rows.forEach(x=>{
+    const key=String(x.order_code||x.id);
+    if(!map.has(key))map.set(key,{...x,items:[],total_amount:0,quantity:0,dp_amount:0});
+    const g=map.get(key);g.items.push(x);g.total_amount+=Number(x.total_amount||0);g.quantity+=Number(x.quantity||0);g.dp_amount+=Number(x.dp_amount||0);
+  });
+  return [...map.values()].sort((a,b)=>String(b.order_date||'').localeCompare(String(a.order_date||'')));
+}
+function multiOrderLineHtml(){
+  const opts=data.products.filter(p=>p.active!==false).map(p=>'<option value="'+esc(p.sku)+'">'+esc(p.sku+' · '+p.name)+'</option>').join('');
+  return '<div class="multi-order-line"><select data-line-sku required><option value="">Pilih produk / varian</option>'+opts+'</select><input data-line-qty type="number" min="1" value="1" required placeholder="Qty"><input data-line-price type="number" min="0" value="0" required placeholder="Harga / pcs"><b data-line-total>Rp 0</b><button type="button" class="row-btn danger" data-remove-line>×</button></div>';
+}
+function refreshMultiOrderTotals(){
+  const rows=[...document.querySelectorAll('#multiOrderLines .multi-order-line')];let sum=0,qty=0;
+  rows.forEach(row=>{
+    const sku=row.querySelector('[data-line-sku]').value,p=data.products.find(x=>String(x.sku)===String(sku));
+    const q=Math.max(0,Number(row.querySelector('[data-line-qty]').value||0));
+    const price=Math.max(0,Number(row.querySelector('[data-line-price]').value||0));
+    const line=q*price;sum+=line;qty+=q;row.querySelector('[data-line-total]').textContent=money(line);
+    if(p&&!row.querySelector('[data-line-price]').dataset.touched)row.querySelector('[data-line-price]').value=Number(p.selling_price||0);
+  });
+  const dp=Number(el('multiOrderDp')?.value||0);
+  if(el('multiOrderGrand'))el('multiOrderGrand').textContent=money(sum);
+  if(el('multiOrderQty'))el('multiOrderQty').textContent=qty+' pcs';
+  if(el('multiOrderBalance'))el('multiOrderBalance').textContent=money(Math.max(0,sum-dp));
+  if(el('multiOrderLinesJson'))el('multiOrderLinesJson').value=JSON.stringify(rows.map(row=>({sku:row.querySelector('[data-line-sku]').value,quantity:Number(row.querySelector('[data-line-qty]').value||0),unit_price:Number(row.querySelector('[data-line-price]').value||0)})).filter(x=>x.sku&&x.quantity>0));
+}
+function bindMultiOrderBuilder(){
+  const add=()=>{
+    el('multiOrderLines').insertAdjacentHTML('beforeend',multiOrderLineHtml());
+    const row=el('multiOrderLines').lastElementChild;
+    row.querySelector('[data-line-sku]').addEventListener('change',()=>{
+      const p=data.products.find(x=>String(x.sku)===String(row.querySelector('[data-line-sku]').value));
+      if(p){row.querySelector('[data-line-price]').value=Number(p.selling_price||0);row.querySelector('[data-line-price]').dataset.touched='';}
+      refreshMultiOrderTotals();
+    });
+    row.querySelectorAll('input').forEach(x=>x.addEventListener('input',()=>{if(x.matches('[data-line-price]'))x.dataset.touched='1';refreshMultiOrderTotals()}));
+    refreshMultiOrderTotals();
+  };
+  el('addMultiOrderLine')?.addEventListener('click',add);
+  el('multiOrderLines')?.addEventListener('click',e=>{if(e.target.closest('[data-remove-line]')){if(el('multiOrderLines').children.length>1)e.target.closest('.multi-order-line').remove();refreshMultiOrderTotals()}});
+  el('multiOrderDp')?.addEventListener('input',refreshMultiOrderTotals);
+  add();
+}
+async function createInvoiceForOrderGroup(orderCode){
+  const rows=data.orders.filter(x=>String(x.order_code)===String(orderCode));if(!rows.length)return;
+  if(data.invoices.some(i=>String(i.order_id)===String(rows[0].id))){alert('Invoice untuk PO ini sudah ada.');return;}
+  const subtotal=rows.reduce((n,x)=>n+Number(x.total_amount||0),0),dp=rows.reduce((n,x)=>n+Number(x.dp_amount||0),0);
+  const no='INV-'+today().replaceAll('-','')+'-'+String(data.invoices.length+1).padStart(3,'0');
+  const result=await db.from('invoices').insert({invoice_no:no,order_id:rows[0].id,customer_id:rows[0].customer_id,issue_date:today(),subtotal,shipping_cost:0,discount:0,total:subtotal,paid_amount:dp,status:dp>=subtotal?'Lunas':dp>0?'Sebagian':'Terkirim',notes:'Invoice gabungan untuk PO '+orderCode});
+  if(result.error){alert('Invoice gagal dibuat: '+result.error.message);return;}
+  await load();const inv=data.invoices.find(x=>x.invoice_no===no);if(inv)openInvoicePreview(inv.id);
 }
 
 function render(){
@@ -339,9 +399,10 @@ function render(){
   renderAgenda();
 
   el('employeeCount')&&(el('employeeCount').textContent=data.employees.length);el('employeeActive')&&(el('employeeActive').textContent=data.employees.filter(x=>x.status==='Aktif').length);el('employeePayrollBase')&&(el('employeePayrollBase').textContent=money(data.employees.filter(x=>x.status==='Aktif').reduce((n,x)=>n+Number(x.base_salary||0),0)));const payrollTotal=data.payroll.reduce((n,x)=>n+Number(x.net_salary||0),0),payrollPaid=data.payroll.filter(x=>x.payment_status==='Dibayar').reduce((n,x)=>n+Number(x.net_salary||0),0);el('payrollTotal')&&(el('payrollTotal').textContent=money(payrollTotal));el('payrollPaid')&&(el('payrollPaid').textContent=money(payrollPaid));el('payrollDue')&&(el('payrollDue').textContent=money(Math.max(0,payrollTotal-payrollPaid)));el('employeesRows')&&(el('employeesRows').innerHTML=data.employees.map(x=>'<tr><td>'+esc(x.employee_code||'—')+'</td><td>'+esc(x.name)+'</td><td>'+esc(x.division||'—')+'</td><td>'+esc(x.position||'—')+'</td><td>'+esc(x.salary_type||'—')+'</td><td>'+money(x.base_salary)+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td>'+action('employees',x.id)+'</tr>').join('')||'<tr><td colspan="8">Belum ada karyawan.</td></tr>');el('payrollRows')&&(el('payrollRows').innerHTML=data.payroll.map(x=>'<tr><td>'+date(x.payroll_month)+'</td><td>'+esc(data.employees.find(e=>String(e.id)===String(x.employee_id))?.name||'—')+'</td><td>'+money(x.base_salary)+'</td><td>'+Number(x.overtime_hours||0)+' jam / '+money(x.overtime_amount)+'</td><td>'+money(x.allowance)+'</td><td>'+money(x.deduction)+'</td><td>'+money(x.net_salary)+'</td><td><span class="tag">'+esc(x.payment_status||'—')+'</span></td>'+action('payroll',x.id)+'</tr>').join('')||'<tr><td colspan="9">Belum ada payroll.</td></tr>');
-  const orderCells=x=>'<td>'+date(x.order_date)+'</td><td>'+esc(x.customer_name)+'</td><td>'+esc(x.product_name)+'</td><td>'+money(x.total_amount)+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td>';
-  el('recentOrders').innerHTML=o.slice(0,5).map(x=>'<tr>'+orderCells(x)+'</tr>').join('')||'<tr><td colspan="5">Belum ada pesanan.</td></tr>';
-  el('ordersRows').innerHTML=o.map(x=>'<tr>'+orderCells(x)+action('orders',x.id)+'</tr>').join('')||'<tr><td colspan="6">Belum ada pesanan.</td></tr>';
+  const groups=groupOrders(o);
+  const orderCells=g=>'<td>'+date(g.order_date)+'</td><td>'+esc(g.customer_name)+'</td><td>'+g.items.length+' varian · '+esc(g.items.map(x=>x.product_name).join(', '))+'</td><td>'+money(g.total_amount)+'</td><td><span class="tag">'+esc(g.status||'—')+'</span></td>';
+  el('recentOrders').innerHTML=groups.slice(0,5).map(g=>'<tr>'+orderCells(g)+'</tr>').join('')||'<tr><td colspan="5">Belum ada pesanan.</td></tr>';
+  el('ordersRows').innerHTML=groups.map(g=>'<tr>'+orderCells(g)+'<td class="actions"><button type="button" class="row-btn" data-action="create-invoice" data-order-code="'+esc(g.order_code)+'">Buat Invoice</button></td></tr>').join('')||'<tr><td colspan="6">Belum ada pesanan.</td></tr>';
   el('customersRows').innerHTML=data.customers.map(x=>'<tr><td>'+esc(x.customer_code||'—')+'</td><td>'+esc(x.name)+'</td><td>'+esc(x.company_name||'—')+'</td><td>'+esc(x.country||'Indonesia')+'</td><td>'+esc(x.customer_type||'—')+'</td><td><span class="tag">'+esc(x.status||'—')+'</span></td>'+action('customers',x.id)+'</tr>').join('')||'<tr><td colspan="7">Belum ada customer.</td></tr>';
   if(typeof window.renderBuyerEnhancements==='function')window.renderBuyerEnhancements();
   el('productsRows').innerHTML=data.products.map(x=>'<tr><td>'+esc(x.sku)+'</td><td>'+(x.image_url?'<img class="product-thumb" src="'+esc(x.image_url)+'" alt="'+esc(x.name)+'">':'<span class="product-thumb-empty">📷</span>')+'</td><td><b>'+esc(x.name)+'</b><br><small>'+esc(x.material||x.category||'')+'</small></td><td>'+money(x.selling_price)+'</td><td>'+Number(x.stock||0)+'</td><td>'+Number(x.min_stock||0)+'</td>'+action('products',x.id)+'</tr>').join('')||'<tr><td colspan="7">Belum ada produk.</td></tr>';
@@ -436,7 +497,18 @@ el('dataForm').onsubmit=async e=>{
     const pub=db.storage.from('product-images').getPublicUrl(up.data.path);
     raw.image_url=pub.data.publicUrl;
   }
-  if(activeForm==='order'){
+  let multiOrderRows=null;
+  if(activeForm==='order'&&!editingId){
+    let lines=[];try{lines=JSON.parse(raw.lines_json||'[]')}catch(_){}
+    delete raw.lines_json;
+    const cust=data.customers.find(x=>String(x.id)===String(raw.customer_id));
+    if(!cust){msg('formMessage','Pilih customer dari hasil pencarian.');return;}
+    if(!lines.length){msg('formMessage','Tambahkan minimal satu produk.');return;}
+    if(lines.some(x=>!data.products.some(p=>String(p.sku)===String(x.sku))||x.quantity<1)){msg('formMessage','Periksa pilihan produk dan jumlah setiap baris.');return;}
+    const code=raw.order_code||('PO-'+today().replaceAll('-','')+'-'+String(data.orders.length+1).padStart(3,'0'));
+    const dp=Number(raw.dp_amount||0);
+    multiOrderRows=lines.map((line,i)=>{const p=data.products.find(x=>String(x.sku)===String(line.sku));return {...raw,order_code:code,customer_name:cust.name,product_name:p.name,sku:p.sku,quantity:Number(line.quantity),unit_price:Number(line.unit_price),total_amount:Number(line.quantity)*Number(line.unit_price),dp_amount:i===0?dp:0,created_at:new Date().toISOString()};});
+  }else if(activeForm==='order'){
     raw.order_date=raw.order_date||today();raw.quantity=Number(raw.quantity||1);raw.unit_price=Number(raw.unit_price||0);
     raw.total_amount=raw.quantity*raw.unit_price;raw.dp_amount=Number(raw.dp_amount||0);
     const cust=data.customers.find(x=>String(x.id)===String(raw.customer_id));
@@ -474,8 +546,9 @@ el('dataForm').onsubmit=async e=>{
   if(!editingId && activeForm==='export'&&!raw.shipment_code)raw.shipment_code='SHP-'+today().replaceAll('-','')+'-'+String(data.exportShipments.length+1).padStart(3,'0');
 
   const payload=noUpdatedAt.has(f.table)?raw:{...raw,updated_at:new Date().toISOString()};
-  const query=editingId?db.from(f.table).update(payload).eq('id',editingId):db.from(f.table).insert(payload);
-  const {error}=await query;
+  let error=null;
+  if(multiOrderRows){const result=await db.from('orders').insert(multiOrderRows);error=result.error;}
+  else{const query=editingId?db.from(f.table).update(payload).eq('id',editingId):db.from(f.table).insert(payload);const result=await query;error=result.error;}
   if(error){console.error(error);msg('formMessage','Gagal menyimpan: '+error.message);return}
   if(activeForm==='payment'&&raw.invoice_id)await syncInvoicePayments(raw.invoice_id);
   el('modal').hidden=true;editingId=null;e.target.reset();await load();
@@ -583,6 +656,7 @@ document.addEventListener('click',async e=>{
     if(error)alert(error.message);else await load();
   }
   if(act==='print')printInvoice(id);
+  if(act==='create-invoice')createInvoiceForOrderGroup(b.dataset.orderCode);
   if(act==='qr')showQrForArtisan(id);
 });
 
