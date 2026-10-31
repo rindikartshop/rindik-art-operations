@@ -448,8 +448,10 @@ async function syncInvoicePayments(invoiceId){
   if(!invoiceId)return;
   const {data:rows,error}=await db.from('payments').select('amount').eq('invoice_id',invoiceId);
   if(error){console.error(error);return}
-  const paid=(rows||[]).reduce((n,x)=>n+Number(x.amount||0),0);
   const inv=data.invoices.find(x=>String(x.id)===String(invoiceId));if(!inv)return;
+  const linkedOrder=data.orders.find(x=>String(x.id)===String(inv.order_id));
+  const baseDp=linkedOrder?data.orders.filter(x=>String(x.order_code||x.id)===String(linkedOrder.order_code||linkedOrder.id)).reduce((n,x)=>n+Number(x.dp_amount||0),0):0;
+  const paid=baseDp+(rows||[]).reduce((n,x)=>n+Number(x.amount||0),0);
   const total=Number(inv.total||0);
   const status=paid<=0?'Draft':paid>=total?'Lunas':'Sebagian';
   const {error:e}=await db.from('invoices').update({paid_amount:Math.min(paid,total),status,updated_at:new Date().toISOString()}).eq('id',invoiceId);
